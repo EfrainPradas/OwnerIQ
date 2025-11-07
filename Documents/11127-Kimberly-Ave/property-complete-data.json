@@ -1,0 +1,65 @@
+{
+  "address": {
+    "street": "11127 Kimberly Ave",
+    "city": "Englewood",
+    "state": "FL",
+    "zip": "34224"
+  },
+  "owner": {
+    "name": "KISSIMMEE LUXURY VACATIONS INC",
+    "address": "2751 S Chickasaw Trl, Ste 106, Orlando, FL 32809"
+  },
+  "property_details": {
+    "permit_number": "20220835470",
+    "type": "Residential Duplex",
+    "square_footage": 2324,
+    "use_and_occupancy": "R-3 Residential, one- and two-family",
+    "flood_zone": "X",
+    "parcel_id": "412001353006",
+    "co_issue_date": "2025-07-23",
+    "contractor": "AMERISTAR GROUP INC",
+    "construction_type": "5B"
+  },
+  "financial": {
+    "closing_date": "2025-03-31",
+    "monthly_insurance": 201.1833333333333,
+    "monthly_tax": 78.03166666666667,
+    "monthly_operating_expenses": 279.215
+  },
+  "insurance": {
+    "policy_number": "FPH5621941",
+    "annual_premium": 2414.2,
+    "coverage_amount": 490000,
+    "deductible": 1000,
+    "effective_date": "2025-03-28",
+    "expiration_date": "2026-03-28"
+  },
+  "tax": {
+    "parcel_number": "412001353006",
+    "assessed_value": 31977,
+    "annual_amount": 936.38,
+    "due_date": "2024-12-05"
+  },
+  "documents_processed": [
+    {
+      "type": "closing_alta",
+      "id": "doc_1761187880080_83e0046a1ad92f7e",
+      "confidence": 0.9
+    },
+    {
+      "type": "home_owner_insurance",
+      "id": "doc_1761187910661_a7d4fa378fbfb5b4",
+      "confidence": 0.98
+    },
+    {
+      "type": "tax_bill",
+      "id": "doc_1761187918054_957f1da37f0e15ee",
+      "confidence": 0.95
+    },
+    {
+      "type": "unknown",
+      "id": "doc_1761187930414_2ef8a33e61d9b421",
+      "confidence": 0.85
+    }
+  ]
+}

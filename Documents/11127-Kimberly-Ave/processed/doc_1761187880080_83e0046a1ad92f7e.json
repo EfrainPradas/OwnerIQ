@@ -1,0 +1,997 @@
+{
+  "document_id": "doc_1761187880080_83e0046a1ad92f7e",
+  "document_type": "closing_alta",
+  "classification_confidence": 0.9,
+  "raw_text": "03 / 31 / 2025 Doc ID: 6580c9e2214e75c3ba19018078b9149e97f14914 Alta page.pdf Alta%20page.pdf 6580c9e2214e75c3ba19018078b9149e97f14914 MM / DD / YYYY Signed This document was requested from app.clio.com 03 / 31 / 2025 20:12:25 UTC Sent for signature to Jinessa Benitez (jbenitez@remarkabletitle.com) from jbenitez@attorneybenitez.com IP: 97.96.254.136 03 / 31 / 2025 20:12:38 UTC Viewed by Jinessa Benitez (jbenitez@remarkabletitle.com) IP: 97.96.254.136 03 / 31 / 2025 20:13:25 UTC Signed by Jinessa Benitez (jbenitez@remarkabletitle.com) IP: 97.96.254.136 The document has been completed. 03 / 31 / 2025 20:13:25 UTC",
+  "pages": [
+    {
+      "page_number": 1,
+      "text": "03 / 31 / 2025 Doc ID: 6580c9e2214e75c3ba19018078b9149e97f14914 Alta page.pdf Alta%20page.pdf 6580c9e2214e75c3ba19018078b914",
+      "extracted_fields": []
+    },
+    {
+      "page_number": 2,
+      "text": "9e97f14914 MM / DD / YYYY Signed This document was requested from app.clio.com 03 / 31 / 2025 20:12:25 UTC Sent for signatur",
+      "extracted_fields": []
+    },
+    {
+      "page_number": 3,
+      "text": "e to Jinessa Benitez (jbenitez@remarkabletitle.com) from jbenitez@attorneybenitez.com IP: 97.96.254.136 03 / 31 / 2025 20:12",
+      "extracted_fields": []
+    },
+    {
+      "page_number": 4,
+      "text": ":38 UTC Viewed by Jinessa Benitez (jbenitez@remarkabletitle.com) IP: 97.96.254.136 03 / 31 / 2025 20:13:25 UTC Signed by Jin",
+      "extracted_fields": []
+    },
+    {
+      "page_number": 5,
+      "text": "essa Benitez (jbenitez@remarkabletitle.com) IP: 97.96.254.136 The document has been completed. 03 / 31 / 2025 20:13:25 UTC",
+      "extracted_fields": []
+    }
+  ],
+  "extracted_data": {
+    "owner_name": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "owner_principal_address": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "owner_phone_number": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "owner_email_address": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "company_name": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "company_address": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "company_phone_number": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "company_email_address": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_address": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "city": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "state": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "zip_code": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_address_legal_description": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_type": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_sqf": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "construction_year": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_owner": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_type_2": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "title_company": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "title_company_contact": {
+      "value": "Jinessa Benitez",
+      "confidence": 0.9,
+      "source_text": "Signed by Jinessa Benitez (jbenitez@remarkabletitle.com)"
+    },
+    "title_company_phone_number": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "title_company_email_address": {
+      "value": "jbenitez@remarkabletitle.com",
+      "confidence": 0.9,
+      "source_text": "Signed by Jinessa Benitez (jbenitez@remarkabletitle.com)"
+    },
+    "purchase_price": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "refinance_price": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "purchase_refinance_closing_date": {
+      "value": "2025-03-31",
+      "confidence": 0.95,
+      "source_text": "03 / 31 / 2025"
+    },
+    "lender_mortgage_name": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_mortgage_address": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_mortgage_phone": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_mortgage_web_page": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_contact_primary_name": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_contact_primary_phone": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_contact_primary_fax": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_contact_primary_email": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_contact_secondary_name": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_contact_secondary_email": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_counsel_name": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_counsel_address": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_counsel_phone": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_counsel_fax": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_counsel_email": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "mortgage_servicing_company": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "mortgage_servicing_company_address": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "mortgage_servicing_company_phone_number": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_web_page": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "loan_number": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "loan_amount": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "interest_rate": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "term_years": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "monthly_payment_principal_interest": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "escrow_property_tax": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "escrow_home_owner_insurance": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "total_monthly_payment_piti": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "home_owner_insurance_initial_escrow": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_taxes_initial_escrow": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "first_payment_date": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "pre_payment_penalty": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "year_1": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "year_2": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "year_3": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "year_4": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "year_5": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_tax_county": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "tax_authority": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "tax_authority_web_page": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "account_number": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "assessed_value": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "taxes_paid_last_year": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_tax_percentage": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "home_owner_insurance_initial_premium": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "insurance_company": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "insurance_agent_name": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "insurance_agent_contact": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "insurance_agent_phone_number": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "insurance_agent_email_address": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "hoi_effective_date": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "hoi_expiration_date": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "policy_number": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "coverage_a_dwelling": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "coverage_b_other_structures": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "coverage_c_personal_property": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "coverage_d_fair_rental_value": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "coverage_e_additional_living_expenses": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "initial_lease_tenant_name": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lease_effective_date": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lease_termination_date": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "gross_monthly_income_rent": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_management_percentage": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "property_management_amount": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "net_monthly_income": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "insurance_initial_premium": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "borrower_name": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "lender_name": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    },
+    "closing_date": {
+      "value": "2025-03-31",
+      "confidence": 0.95,
+      "source_text": "03 / 31 / 2025"
+    },
+    "down_payment": {
+      "value": null,
+      "confidence": 0,
+      "source_text": ""
+    }
+  },
+  "extraction_confidence": 0.1,
+  "source": {
+    "filename": "03.31.25 Signed ALTA - 11127 Kimberly Ave.pdf",
+    "file_hash": "afea5cae963e695560e320d3e94f56a2",
+    "file_size": 550042,
+    "page_count": 5
+  },
+  "processing": {
+    "started_at": "2025-10-23T02:51:20.080Z",
+    "completed_at": "2025-10-23T02:51:48.658Z",
+    "duration_ms": 28578,
+    "ai_model": "gpt-4o",
+    "ai_tokens_used": 4430
+  },
+  "validation": {
+    "is_valid": false,
+    "errors": [
+      {
+        "field": "loan_number",
+        "message": "Required field 'loan_number' is missing",
+        "type": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "property_address",
+        "message": "Required field 'property_address' is missing",
+        "type": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "borrower_name",
+        "message": "Required field 'borrower_name' is missing",
+        "type": "MISSING_REQUIRED_FIELD"
+      }
+    ],
+    "warnings": [
+      {
+        "field": "owner_name",
+        "message": "Low confidence (0) for field 'owner_name'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "owner_principal_address",
+        "message": "Low confidence (0) for field 'owner_principal_address'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "owner_phone_number",
+        "message": "Low confidence (0) for field 'owner_phone_number'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "owner_email_address",
+        "message": "Low confidence (0) for field 'owner_email_address'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "company_name",
+        "message": "Low confidence (0) for field 'company_name'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "company_address",
+        "message": "Low confidence (0) for field 'company_address'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "company_phone_number",
+        "message": "Low confidence (0) for field 'company_phone_number'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "company_email_address",
+        "message": "Low confidence (0) for field 'company_email_address'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_address",
+        "message": "Low confidence (0) for field 'property_address'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "city",
+        "message": "Low confidence (0) for field 'city'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "state",
+        "message": "Low confidence (0) for field 'state'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "zip_code",
+        "message": "Low confidence (0) for field 'zip_code'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_address_legal_description",
+        "message": "Low confidence (0) for field 'property_address_legal_description'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_type",
+        "message": "Low confidence (0) for field 'property_type'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_sqf",
+        "message": "Low confidence (0) for field 'property_sqf'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "construction_year",
+        "message": "Low confidence (0) for field 'construction_year'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_owner",
+        "message": "Low confidence (0) for field 'property_owner'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_type_2",
+        "message": "Low confidence (0) for field 'property_type_2'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "title_company",
+        "message": "Low confidence (0) for field 'title_company'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "title_company_phone_number",
+        "message": "Low confidence (0) for field 'title_company_phone_number'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "purchase_price",
+        "message": "Low confidence (0) for field 'purchase_price'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "refinance_price",
+        "message": "Low confidence (0) for field 'refinance_price'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_mortgage_name",
+        "message": "Low confidence (0) for field 'lender_mortgage_name'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_mortgage_address",
+        "message": "Low confidence (0) for field 'lender_mortgage_address'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_mortgage_phone",
+        "message": "Low confidence (0) for field 'lender_mortgage_phone'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_mortgage_web_page",
+        "message": "Low confidence (0) for field 'lender_mortgage_web_page'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_contact_primary_name",
+        "message": "Low confidence (0) for field 'lender_contact_primary_name'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_contact_primary_phone",
+        "message": "Low confidence (0) for field 'lender_contact_primary_phone'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_contact_primary_fax",
+        "message": "Low confidence (0) for field 'lender_contact_primary_fax'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_contact_primary_email",
+        "message": "Low confidence (0) for field 'lender_contact_primary_email'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_contact_secondary_name",
+        "message": "Low confidence (0) for field 'lender_contact_secondary_name'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_contact_secondary_email",
+        "message": "Low confidence (0) for field 'lender_contact_secondary_email'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_counsel_name",
+        "message": "Low confidence (0) for field 'lender_counsel_name'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_counsel_address",
+        "message": "Low confidence (0) for field 'lender_counsel_address'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_counsel_phone",
+        "message": "Low confidence (0) for field 'lender_counsel_phone'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_counsel_fax",
+        "message": "Low confidence (0) for field 'lender_counsel_fax'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_counsel_email",
+        "message": "Low confidence (0) for field 'lender_counsel_email'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "mortgage_servicing_company",
+        "message": "Low confidence (0) for field 'mortgage_servicing_company'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "mortgage_servicing_company_address",
+        "message": "Low confidence (0) for field 'mortgage_servicing_company_address'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "mortgage_servicing_company_phone_number",
+        "message": "Low confidence (0) for field 'mortgage_servicing_company_phone_number'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_web_page",
+        "message": "Low confidence (0) for field 'lender_web_page'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "loan_number",
+        "message": "Low confidence (0) for field 'loan_number'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "loan_amount",
+        "message": "Low confidence (0) for field 'loan_amount'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "interest_rate",
+        "message": "Low confidence (0) for field 'interest_rate'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "term_years",
+        "message": "Low confidence (0) for field 'term_years'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "monthly_payment_principal_interest",
+        "message": "Low confidence (0) for field 'monthly_payment_principal_interest'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "escrow_property_tax",
+        "message": "Low confidence (0) for field 'escrow_property_tax'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "escrow_home_owner_insurance",
+        "message": "Low confidence (0) for field 'escrow_home_owner_insurance'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "total_monthly_payment_piti",
+        "message": "Low confidence (0) for field 'total_monthly_payment_piti'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "home_owner_insurance_initial_escrow",
+        "message": "Low confidence (0) for field 'home_owner_insurance_initial_escrow'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_taxes_initial_escrow",
+        "message": "Low confidence (0) for field 'property_taxes_initial_escrow'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "first_payment_date",
+        "message": "Low confidence (0) for field 'first_payment_date'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "pre_payment_penalty",
+        "message": "Low confidence (0) for field 'pre_payment_penalty'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "year_1",
+        "message": "Low confidence (0) for field 'year_1'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "year_2",
+        "message": "Low confidence (0) for field 'year_2'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "year_3",
+        "message": "Low confidence (0) for field 'year_3'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "year_4",
+        "message": "Low confidence (0) for field 'year_4'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "year_5",
+        "message": "Low confidence (0) for field 'year_5'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_tax_county",
+        "message": "Low confidence (0) for field 'property_tax_county'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "tax_authority",
+        "message": "Low confidence (0) for field 'tax_authority'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "tax_authority_web_page",
+        "message": "Low confidence (0) for field 'tax_authority_web_page'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "account_number",
+        "message": "Low confidence (0) for field 'account_number'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "assessed_value",
+        "message": "Low confidence (0) for field 'assessed_value'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "taxes_paid_last_year",
+        "message": "Low confidence (0) for field 'taxes_paid_last_year'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_tax_percentage",
+        "message": "Low confidence (0) for field 'property_tax_percentage'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "home_owner_insurance_initial_premium",
+        "message": "Low confidence (0) for field 'home_owner_insurance_initial_premium'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "insurance_company",
+        "message": "Low confidence (0) for field 'insurance_company'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "insurance_agent_name",
+        "message": "Low confidence (0) for field 'insurance_agent_name'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "insurance_agent_contact",
+        "message": "Low confidence (0) for field 'insurance_agent_contact'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "insurance_agent_phone_number",
+        "message": "Low confidence (0) for field 'insurance_agent_phone_number'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "insurance_agent_email_address",
+        "message": "Low confidence (0) for field 'insurance_agent_email_address'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "hoi_effective_date",
+        "message": "Low confidence (0) for field 'hoi_effective_date'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "hoi_expiration_date",
+        "message": "Low confidence (0) for field 'hoi_expiration_date'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "policy_number",
+        "message": "Low confidence (0) for field 'policy_number'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "coverage_a_dwelling",
+        "message": "Low confidence (0) for field 'coverage_a_dwelling'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "coverage_b_other_structures",
+        "message": "Low confidence (0) for field 'coverage_b_other_structures'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "coverage_c_personal_property",
+        "message": "Low confidence (0) for field 'coverage_c_personal_property'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "coverage_d_fair_rental_value",
+        "message": "Low confidence (0) for field 'coverage_d_fair_rental_value'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "coverage_e_additional_living_expenses",
+        "message": "Low confidence (0) for field 'coverage_e_additional_living_expenses'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "initial_lease_tenant_name",
+        "message": "Low confidence (0) for field 'initial_lease_tenant_name'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lease_effective_date",
+        "message": "Low confidence (0) for field 'lease_effective_date'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lease_termination_date",
+        "message": "Low confidence (0) for field 'lease_termination_date'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "gross_monthly_income_rent",
+        "message": "Low confidence (0) for field 'gross_monthly_income_rent'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_management_percentage",
+        "message": "Low confidence (0) for field 'property_management_percentage'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "property_management_amount",
+        "message": "Low confidence (0) for field 'property_management_amount'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "net_monthly_income",
+        "message": "Low confidence (0) for field 'net_monthly_income'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "insurance_initial_premium",
+        "message": "Low confidence (0) for field 'insurance_initial_premium'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "borrower_name",
+        "message": "Low confidence (0) for field 'borrower_name'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "lender_name",
+        "message": "Low confidence (0) for field 'lender_name'",
+        "type": "LOW_CONFIDENCE"
+      },
+      {
+        "field": "down_payment",
+        "message": "Low confidence (0) for field 'down_payment'",
+        "type": "LOW_CONFIDENCE"
+      }
+    ]
+  },
+  "metadata": {
+    "classification_reasoning": "The document is identified as an 'Alta page', which suggests it is related to a closing statement or ALTA settlement statement.",
+    "uploaded_by": "system",
+    "source": "bulk_upload",
+    "property_address": "11127 Kimberly Ave"
+  }
+}

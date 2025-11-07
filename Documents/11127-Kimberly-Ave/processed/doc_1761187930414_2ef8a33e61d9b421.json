@@ -1,0 +1,160 @@
+{
+  "document_id": "doc_1761187930414_2ef8a33e61d9b421",
+  "document_type": "unknown",
+  "classification_confidence": 0.85,
+  "raw_text": "Charlotte County Government \"To exceed expectations in the delivery of public services\" www.charlottecountyfl.gov CERTIFICATE OF OCCUPANCY This certificate confirms that the below named structure, or described portion of said structure, has been inspected for compliance with the requirements of this code for the occupancy and division of occupancy and the use for which the proposed occupancy is classified. Permit No. 20220835470 Issued On: 7/23/2025Prepared by: CLEMENTH Issued for: Residential Duplex Status: C of O Issued Address Details: 11127 KIMBERLY AVE, ENGLEWOOD, FL 34224 Section: Township: Range: Parcel ID: 1 41 20 412001353006 Lot: Block: Subdivision: Flood Zone: 0017 3697 PCH X Owner Details:KISSIMMEE LUXURY VACATIONS INC, 2751 S Chickasaw Trl, Ste 106, Orlando, FL 32809 Contractor:AMERISTAR GROUP INC Our records indicate all required inspections were completed on : 6/19/2025 In accordance with the Florida Building Code, authorization to occupy the above described structure is granted as noted herein: Issued under the authority of the Charlotte County Building Official - Shawn McNulty, Building Official Building Official or Designee - Shawn McNulty, Building OfficialPrint Name if other than Building Official Use and Occupancy of the BuildingConstruction TypeSq Footage R-3 Residential, one- and two-family5B2324 Description of the portion of the structure for which the certificate is issued: DUPLEX ZONE X CMU ACH 7.00 The following conditions and stipulations exist as part of this permit: EOR ALBERTO I GUIDA This permit is issued under the 7th Edition (2020) Florida Building Code. Automatic Sprinkler Installed?NAutomatic Sprinkler Required?N Designed ExposureCDesigned Occupancy LoadN/A Designed Wind Load160",
+  "pages": [
+    {
+      "page_number": 1,
+      "text": "Charlotte County Government \"To exceed expectations in the delivery of public services\" www.charlottecountyfl.gov CERTIFICATE OF OCCUPANCY This certificate confirms that the below named structure, or described portion of said structure, has been inspected for compliance with the requirements of this code for the occupancy and division of occupancy and the use for which the proposed occupancy is classified. Permit No. 20220835470 Issued On: 7/23/2025Prepared by: CLEMENTH Issued for: Residential Duplex Status: C of O Issued Address Details: 11127 KIMBERLY AVE, ENGLEWOOD, FL 34224 Section: Township: Range: Parcel ID: 1 41 20 412001353006 Lot: Block: Subdivision: Flood Zone: 0017 3697 PCH X Owner Details:KISSIMMEE LUXURY VACATIONS INC, 2751 S Chickasaw Trl, Ste 106, Orlando, FL 32809 Contractor:AMERISTAR GROUP INC Our records indicate all required inspections were completed on : 6/19/2025 In accordance with the Florida Building Code, authorization to occupy the above described structure is granted as noted herein: Issued under the authority of the Charlotte County Building Official - Shawn McNulty, Building Official Building Official or Designee - Shawn McNulty, Building OfficialPrint Name if other than Building Official Use and Occupancy of the BuildingConstruction TypeSq Footage R-3 Residential, one- and two-family5B2324 Description of the portion of the structure for which the certificate is issued: DUPLEX ZONE X CMU ACH 7.00 The following conditions and stipulations exist as part of this permit: EOR ALBERTO I GUIDA This permit is issued under the 7th Edition (2020) Florida Building Code. Automatic Sprinkler Installed?NAutomatic Sprinkler Required?N Designed ExposureCDesigned Occupancy LoadN/A Designed Wind Load160",
+      "extracted_fields": []
+    }
+  ],
+  "extracted_data": {
+    "permit_number": {
+      "value": "20220835470",
+      "confidence": 1,
+      "source_text": "Permit No. 20220835470"
+    },
+    "issue_date": {
+      "value": "2025-07-23",
+      "confidence": 1,
+      "source_text": "Issued On: 7/23/2025"
+    },
+    "prepared_by": {
+      "value": "CLEMENTH",
+      "confidence": 1,
+      "source_text": "Prepared by: CLEMENTH"
+    },
+    "issued_for": {
+      "value": "Residential Duplex",
+      "confidence": 1,
+      "source_text": "Issued for: Residential Duplex"
+    },
+    "status": {
+      "value": "C of O Issued",
+      "confidence": 1,
+      "source_text": "Status: C of O Issued"
+    },
+    "address": {
+      "value": "11127 KIMBERLY AVE, ENGLEWOOD, FL 34224",
+      "confidence": 1,
+      "source_text": "Address Details: 11127 KIMBERLY AVE, ENGLEWOOD, FL 34224"
+    },
+    "parcel_id": {
+      "value": "412001353006",
+      "confidence": 1,
+      "source_text": "Parcel ID: 1 41 20 412001353006"
+    },
+    "flood_zone": {
+      "value": "X",
+      "confidence": 1,
+      "source_text": "Flood Zone: 0017 3697 PCH X"
+    },
+    "owner": {
+      "value": "KISSIMMEE LUXURY VACATIONS INC",
+      "confidence": 1,
+      "source_text": "Owner Details:KISSIMMEE LUXURY VACATIONS INC"
+    },
+    "owner_address": {
+      "value": "2751 S Chickasaw Trl, Ste 106, Orlando, FL 32809",
+      "confidence": 1,
+      "source_text": "2751 S Chickasaw Trl, Ste 106, Orlando, FL 32809"
+    },
+    "contractor": {
+      "value": "AMERISTAR GROUP INC",
+      "confidence": 1,
+      "source_text": "Contractor:AMERISTAR GROUP INC"
+    },
+    "inspections_completed_date": {
+      "value": "2025-06-19",
+      "confidence": 1,
+      "source_text": "all required inspections were completed on : 6/19/2025"
+    },
+    "building_official": {
+      "value": "Shawn McNulty",
+      "confidence": 1,
+      "source_text": "Building Official - Shawn McNulty"
+    },
+    "use_and_occupancy": {
+      "value": "R-3 Residential, one- and two-family",
+      "confidence": 1,
+      "source_text": "Use and Occupancy of the BuildingConstruction TypeSq Footage R-3 Residential, one- and two-family"
+    },
+    "construction_type": {
+      "value": "5B",
+      "confidence": 1,
+      "source_text": "Construction TypeSq Footage R-3 Residential, one- and two-family5B"
+    },
+    "square_footage": {
+      "value": 2324,
+      "confidence": 1,
+      "source_text": "Sq Footage R-3 Residential, one- and two-family5B2324"
+    },
+    "description": {
+      "value": "DUPLEX ZONE X CMU ACH 7.00",
+      "confidence": 1,
+      "source_text": "Description of the portion of the structure for which the certificate is issued: DUPLEX ZONE X CMU ACH 7.00"
+    },
+    "conditions": {
+      "value": "EOR ALBERTO I GUIDA",
+      "confidence": 1,
+      "source_text": "The following conditions and stipulations exist as part of this permit: EOR ALBERTO I GUIDA"
+    },
+    "building_code_edition": {
+      "value": "7th Edition (2020)",
+      "confidence": 1,
+      "source_text": "This permit is issued under the 7th Edition (2020) Florida Building Code."
+    },
+    "automatic_sprinkler_installed": {
+      "value": "N",
+      "confidence": 1,
+      "source_text": "Automatic Sprinkler Installed?N"
+    },
+    "automatic_sprinkler_required": {
+      "value": "N",
+      "confidence": 1,
+      "source_text": "Automatic Sprinkler Required?N"
+    },
+    "designed_exposure": {
+      "value": "C",
+      "confidence": 1,
+      "source_text": "Designed ExposureC"
+    },
+    "designed_occupancy_load": {
+      "value": null,
+      "confidence": 0.9,
+      "source_text": "Designed Occupancy LoadN/A"
+    },
+    "designed_wind_load": {
+      "value": 160,
+      "confidence": 1,
+      "source_text": "Designed Wind Load160"
+    }
+  },
+  "extraction_confidence": 0.98,
+  "source": {
+    "filename": "07.23.25 11127 kimberly CO.pdf",
+    "file_hash": "baf9a2bab6192086716ea3f59aa7d3aa",
+    "file_size": 670663,
+    "page_count": 1
+  },
+  "processing": {
+    "started_at": "2025-10-23T02:52:10.415Z",
+    "completed_at": "2025-10-23T02:52:20.183Z",
+    "duration_ms": 9768,
+    "ai_model": "gpt-4o",
+    "ai_tokens_used": 11944
+  },
+  "validation": {
+    "is_valid": true,
+    "errors": [],
+    "warnings": []
+  },
+  "metadata": {
+    "classification_reasoning": "The document is a Certificate of Occupancy, which does not fit into any of the specified document types related to real estate or mortgage documents.",
+    "uploaded_by": "system",
+    "source": "bulk_upload",
+    "property_address": "11127 Kimberly Ave"
+  }
+}

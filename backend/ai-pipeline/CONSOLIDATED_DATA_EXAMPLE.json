@@ -1,0 +1,270 @@
+{
+  "_metadata": {
+    "description": "Ejemplo de datos consolidados de múltiples documentos procesados con IA",
+    "documents_processed": 3,
+    "total_tokens_used": 158466,
+    "total_processing_time_ms": 23692,
+    "created_at": "2025-01-12T17:30:49Z"
+  },
+  
+  "documents": {
+    "closing": {
+      "document_id": "doc_1760290205903_a82c6328b8e9d094",
+      "document_type": "closing_alta",
+      "classification_confidence": 0.90,
+      "extraction_confidence": 0.90,
+      "tokens_used": 76124,
+      "extracted_fields": {
+        "loan_number": {
+          "value": "10004353",
+          "confidence": 0.98,
+          "source_text": "Loan No. 10004353"
+        },
+        "loan_amount": {
+          "value": 161000,
+          "confidence": 0.95,
+          "source_text": "$161,000.00"
+        },
+        "property_address": {
+          "value": "131 Redwood Track Course, Ocala, FL 34472",
+          "confidence": 0.97,
+          "source_text": "Property: 131 Redwood Track Course, Ocala, FL 34472"
+        },
+        "borrower_name": {
+          "value": "Kissimmee Luxury Vacations Inc",
+          "confidence": 0.96,
+          "source_text": "to Kissimmee Luxury Vacations Inc"
+        },
+        "lender_name": {
+          "value": "MoFin Lending Corporation",
+          "confidence": 0.98,
+          "source_text": "from MoFin Lending Corporation"
+        },
+        "closing_date": {
+          "value": "2024-01-15",
+          "confidence": 0.65,
+          "source_text": "Closing Date: 01/15/2024"
+        },
+        "purchase_price": {
+          "value": 200000,
+          "confidence": 0.88,
+          "source_text": "Purchase Price: $200,000.00"
+        },
+        "down_payment": {
+          "value": 39000,
+          "confidence": 0.85,
+          "source_text": "Down Payment: $39,000.00"
+        }
+      }
+    },
+    
+    "alta": {
+      "document_id": "doc_1760290224727_99a38a25b8a8d38f",
+      "document_type": "closing_alta",
+      "classification_confidence": 0.98,
+      "extraction_confidence": 0.90,
+      "tokens_used": 81245,
+      "extracted_fields": {
+        "loan_number": {
+          "value": "10004353",
+          "confidence": 0.99,
+          "source_text": "Loan #10004353"
+        },
+        "settlement_date": {
+          "value": "2024-01-15",
+          "confidence": 0.92,
+          "source_text": "Settlement Date: January 15, 2024"
+        },
+        "title_insurance": {
+          "value": 1250,
+          "confidence": 0.88,
+          "source_text": "Title Insurance: $1,250.00"
+        },
+        "recording_fees": {
+          "value": 185,
+          "confidence": 0.90,
+          "source_text": "Recording Fees: $185.00"
+        },
+        "total_closing_costs": {
+          "value": 5430,
+          "confidence": 0.87,
+          "source_text": "Total Closing Costs: $5,430.00"
+        }
+      }
+    },
+    
+    "guarantees": [
+      {
+        "document_id": "doc_1760290241017_b793f81b57205e0a",
+        "document_type": "home_owner_insurance",
+        "classification_confidence": 0.98,
+        "extraction_confidence": 0.96,
+        "tokens_used": 81245,
+        "extracted_fields": {
+          "policy_number": {
+            "value": "HOI-2024-131RW",
+            "confidence": 0.99,
+            "source_text": "Policy Number: HOI-2024-131RW"
+          },
+          "effective_date": {
+            "value": "2025-05-01",
+            "confidence": 0.98,
+            "source_text": "Effective Date: 05/01/2025"
+          },
+          "expiration_date": {
+            "value": "2026-05-01",
+            "confidence": 0.98,
+            "source_text": "Expiration Date: 05/01/2026"
+          },
+          "annual_premium": {
+            "value": 1850,
+            "confidence": 0.95,
+            "source_text": "Annual Premium: $1,850.00"
+          },
+          "coverage_amount": {
+            "value": 250000,
+            "confidence": 0.94,
+            "source_text": "Coverage A - Dwelling: $250,000"
+          },
+          "deductible": {
+            "value": 2500,
+            "confidence": 0.92,
+            "source_text": "Deductible: $2,500"
+          }
+        }
+      }
+    ]
+  },
+  
+  "consolidated_property_data": {
+    "_strategy": "Merge con prioridad: closing > alta > guarantees. Solo campos con confidence > 0.7",
+    
+    "property": {
+      "address": "131 Redwood Track Course",
+      "city": "Ocala",
+      "state": "FL",
+      "zip": "34472",
+      "type": "residential",
+      "_source": "closing.property_address",
+      "_confidence": 0.97
+    },
+    
+    "financial": {
+      "purchase_price": 200000,
+      "down_payment": 39000,
+      "closing_date": "2024-01-15",
+      "total_closing_costs": 5430,
+      "title_insurance": 1250,
+      "recording_fees": 185,
+      "_sources": {
+        "purchase_price": "closing",
+        "down_payment": "closing",
+        "closing_date": "alta (higher confidence)",
+        "total_closing_costs": "alta",
+        "title_insurance": "alta",
+        "recording_fees": "alta"
+      }
+    },
+    
+    "loan": {
+      "number": "10004353",
+      "amount": 161000,
+      "ltv_calculated": 80.5,
+      "_calculation": "161000 / 200000 * 100 = 80.5%",
+      "_sources": {
+        "number": "alta (higher confidence 0.99 vs 0.98)",
+        "amount": "closing"
+      }
+    },
+    
+    "parties": {
+      "borrower": "Kissimmee Luxury Vacations Inc",
+      "lender": "MoFin Lending Corporation",
+      "_sources": {
+        "borrower": "closing",
+        "lender": "closing"
+      }
+    },
+    
+    "insurance": {
+      "policy_number": "HOI-2024-131RW",
+      "carrier": "Unknown",
+      "annual_premium": 1850,
+      "effective_date": "2025-05-01",
+      "expiration_date": "2026-05-01",
+      "coverage_dwelling": 250000,
+      "deductible": 2500,
+      "_source": "guarantees[0] (HOI document)"
+    }
+  },
+  
+  "form_mapping": {
+    "_description": "Mapeo directo a campos del formulario de PropertiesView",
+    
+    "address": "131 Redwood Track Course",
+    "city": "Ocala",
+    "state": "FL",
+    "zipCode": "34472",
+    "propertyType": "residential",
+    
+    "valuation": 200000,
+    "loanAmount": 161000,
+    "ltv": 80.5,
+    
+    "loanNumber": "10004353",
+    "borrowerName": "Kissimmee Luxury Vacations Inc",
+    "lenderName": "MoFin Lending Corporation",
+    "closingDate": "2024-01-15",
+    
+    "insurance": 1850,
+    
+    "notes": "Loan #: 10004353\nBorrower: Kissimmee Luxury Vacations Inc\nLender: MoFin Lending Corporation\nPolicy #: HOI-2024-131RW\nClosing Costs: $5,430\nTitle Insurance: $1,250"
+  },
+  
+  "validation": {
+    "is_valid": true,
+    "completeness": {
+      "property_info": "100%",
+      "financial_info": "100%",
+      "loan_info": "100%",
+      "insurance_info": "100%",
+      "overall": "100%"
+    },
+    "warnings": [
+      {
+        "field": "closing_date",
+        "message": "Closing date from 'closing' document has low confidence (0.65). Using ALTA date (0.92) instead.",
+        "severity": "low"
+      }
+    ],
+    "data_quality": {
+      "avg_confidence": 0.93,
+      "fields_with_high_confidence": 14,
+      "fields_with_medium_confidence": 2,
+      "fields_with_low_confidence": 0
+    }
+  },
+  
+  "traceability": {
+    "closing_document": {
+      "fields_extracted": 8,
+      "fields_used": 6,
+      "avg_confidence": 0.90
+    },
+    "alta_document": {
+      "fields_extracted": 5,
+      "fields_used": 5,
+      "avg_confidence": 0.89
+    },
+    "guarantee_documents": {
+      "count": 1,
+      "types": ["home_owner_insurance"],
+      "fields_extracted": 6,
+      "fields_used": 6,
+      "avg_confidence": 0.96
+    },
+    "total_fields_extracted": 19,
+    "total_fields_used": 17,
+    "duplicate_fields_resolved": 2
+  }
+}
