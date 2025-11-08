@@ -1,0 +1,339 @@
+/* HELOC Dashboard Styles - Matching Mortgage Calculator */
+
+/* Modal Overlay */
+.heloc-dashboard-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(1400px 900px at 20% -10%, #19224A 0%, #0B1020 40%) !important;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.heloc-dashboard {
+  width: 100%;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: linear-gradient(180deg, #1E2749 0%, #131A33 100%);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Header */
+.heloc-header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.heloc-header h2 {
+  margin: 0 0 5px 0;
+  font-size: 28px;
+  color: #E0E7FF;
+}
+
+.heloc-header .property-address {
+  margin: 0;
+  font-size: 16px;
+  color: #A3B1FF;
+}
+
+.heloc-header .close-button {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #A3B1FF;
+  cursor: pointer;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heloc-header .close-button:hover {
+  background-color: rgba(108, 138, 255, 0.15);
+  color: #E0E7FF;
+}
+
+/* Tabs */
+.heloc-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+.heloc-tabs .tab {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #A3B1FF;
+  transition: all 0.2s;
+}
+
+.heloc-tabs .tab:hover {
+  color: #E0E7FF;
+  background: rgba(108, 138, 255, 0.08);
+}
+
+.heloc-tabs .tab.active {
+  color: #6C8AFF;
+  border-bottom-color: #6C8AFF;
+}
+
+/* Calculator Form */
+.calculator-form {
+  animation: fadeIn 0.3s;
+}
+
+.form-section {
+  background: rgba(108, 138, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.form-section h3 {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  color: #E0E7FF;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 10px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #A3B1FF;
+  font-size: 14px;
+}
+
+.form-group input {
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  font-size: 14px;
+  background: rgba(108, 138, 255, 0.05);
+  color: #E0E7FF;
+  transition: all 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #6C8AFF;
+  background: rgba(108, 138, 255, 0.08);
+}
+
+.calculate-button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #6C8AFF 0%, #5B7AE8 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(108, 138, 255, 0.3);
+}
+
+.calculate-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(108, 138, 255, 0.4);
+}
+
+/* Results */
+.results-container {
+  animation: fadeIn 0.3s;
+  margin-top: 30px;
+}
+
+.results-title {
+  font-size: 24px;
+  color: #E0E7FF;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.result-card {
+  background: rgba(108, 138, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.result-card h4 {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  color: #E0E7FF;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.result-row:last-child {
+  border-bottom: none;
+}
+
+.result-row span:first-child {
+  color: #A3B1FF;
+  font-weight: 500;
+}
+
+.result-row strong {
+  color: #E0E7FF;
+  font-weight: 600;
+}
+
+.result-row-highlight {
+  background: rgba(108, 138, 255, 0.12);
+  padding: 12px;
+  margin: 8px -12px;
+  border-radius: 6px;
+}
+
+/* Feasibility Banner */
+.feasibility-banner {
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.feasibility-banner.success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 2px solid #10b981;
+  color: #10b981;
+}
+
+.feasibility-banner.error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 2px solid #ef4444;
+  color: #ef4444;
+}
+
+.feasibility-banner .icon {
+  font-size: 24px;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #A3B1FF;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.12);
+  border-top-color: #6C8AFF;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error Message */
+.error-message {
+  padding: 40px;
+  text-align: center;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  color: #ef4444;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .heloc-tabs .tab {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+}

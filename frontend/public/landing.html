@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OwnerIQ - Real Estate Portfolio Management Platform</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="OwnerIQ is a comprehensive real estate portfolio management platform for property owners and investors. Manage properties, calculate mortgages, track tenants, and analyze investments with AI-powered tools.">
+    <meta name="keywords" content="real estate, property management, portfolio management, mortgage calculator, tenant management, investment analytics, AI document processing">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="OwnerIQ - Real Estate Portfolio Management">
+    <meta property="og:description" content="Complete platform for managing real estate portfolios with AI-powered document processing and financial analytics">
+    <meta property="og:type" content="website">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 60px 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .features {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            margin-top: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #667eea;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .feature {
+            padding: 30px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            transition: transform 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .feature h3 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .business-info {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .business-info h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .info-item {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .info-item strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏢 OwnerIQ</h1>
+            <p class="tagline">Complete Real Estate Portfolio Management Platform</p>
+            <button class="cta-button" onclick="window.location.href='/'">Launch Application →</button>
+        </header>
+
+        <div class="features">
+            <h2>Platform Features</h2>
+
+            <div class="feature-grid">
+                <div class="feature">
+                    <div class="feature-icon">🏘️</div>
+                    <h3>Property Management</h3>
+                    <p>Manage multiple properties with comprehensive tracking of financial metrics, valuations, and operating expenses. Full CRUD operations with data validation.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">🧮</div>
+                    <h3>Mortgage Calculator</h3>
+                    <p>Advanced mortgage calculator with full amortization schedules, PITI calculations, and 360-payment tracking. Visualize principal vs interest over time.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">👥</div>
+                    <h3>Tenant & Lender Management</h3>
+                    <p>Complete client management system for tenants and lenders with contact information, addresses, and role-based relationships.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Document Processing</h3>
+                    <p>Upload PDFs and automatically extract structured data using GPT-4. Supports closing statements, mortgage docs, insurance policies, and leases.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <h3>Investment Analytics</h3>
+                    <p>Calculate key metrics: NOI, Cap Rate, Cash-on-Cash Return, DSCR. Make data-driven investment decisions with comprehensive financial analysis.</p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">💰</div>
+                    <h3>Rent Collection</h3>
+                    <p>Automated rent invoice generation, payment tracking, late fee calculations, and FIFO payment allocation across multiple leases.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="business-info">
+            <h2>Technical Stack</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Frontend</strong>
+                    React 18, Chart.js for visualizations, Responsive design
+                </div>
+                <div class="info-item">
+                    <strong>Backend</strong>
+                    Node.js with Express, RESTful API architecture
+                </div>
+                <div class="info-item">
+                    <strong>Database</strong>
+                    PostgreSQL (Supabase-hosted) with 18+ active tables
+                </div>
+                <div class="info-item">
+                    <strong>AI Integration</strong>
+                    OpenAI GPT-4 for document classification and extraction
+                </div>
+                <div class="info-item">
+                    <strong>Authentication</strong>
+                    Supabase Auth with JWT tokens
+                </div>
+                <div class="info-item">
+                    <strong>Deployment</strong>
+                    AWS EC2, Nginx reverse proxy, PM2 process manager
+                </div>
+            </div>
+        </div>
+
+        <div class="business-info">
+            <h2>Key Capabilities</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Property Analytics</strong>
+                    Track 100+ financial fields per property including valuations, loans, taxes, insurance, and rental income
+                </div>
+                <div class="info-item">
+                    <strong>Financial Metrics</strong>
+                    Automated calculation of NOI, Cap Rate, Cash Flow, DSCR, and other investment metrics
+                </div>
+                <div class="info-item">
+                    <strong>Document Intelligence</strong>
+                    AI-powered extraction from 8+ document types with confidence scoring and validation
+                </div>
+                <div class="info-item">
+                    <strong>Lease Management</strong>
+                    Full lease lifecycle with auto-generated invoices, payment tracking, and late fee policies
+                </div>
+                <div class="info-item">
+                    <strong>Reporting</strong>
+                    Comprehensive dashboards with charts, amortization schedules, and portfolio summaries
+                </div>
+                <div class="info-item">
+                    <strong>Data Security</strong>
+                    Row-level security, encrypted connections, and audit logging
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>OwnerIQ</strong> - Empowering Real Estate Investors with Data-Driven Insights</p>
+            <p style="margin-top: 20px; opacity: 0.8;">Built with React • Node.js • PostgreSQL • OpenAI GPT-4</p>
+        </footer>
+    </div>
+</body>
+</html>

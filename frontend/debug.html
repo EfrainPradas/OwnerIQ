@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OwnerIQ - Debugger de Base de Datos</title>
+    <style>
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1E1E1E;
+            --panel-primary: #242424;
+            --panel-secondary: #2D2D2D;
+            --text-primary: #E1E1E1;
+            --text-secondary: #B0B0B0;
+            --text-muted: #8D8D8D;
+            --accent-primary: #6C8AFF;
+            --accent-secondary: #4A5CFF;
+            --border: #383838;
+            --success: #22C55E;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            --border-radius: 8px;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: var(--panel-primary);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1, h2, h3, h4 {
+            color: var(--accent-primary);
+            margin-top: 0;
+        }
+        .card {
+            background-color: var(--panel-primary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-secondary);
+        }
+        input, button {
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border);
+            font-size: 16px;
+        }
+        input {
+            background-color: var(--panel-secondary);
+            color: var(--text-primary);
+            width: 100%;
+        }
+        button {
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: var(--accent-secondary);
+        }
+        .results {
+            margin-top: 30px;
+        }
+        pre {
+            background-color: var(--panel-secondary);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+            border: 1px solid var(--border);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: var(--panel-secondary);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border);
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .status-success {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+        .tab-bar {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .tab.active {
+            border-bottom: 3px solid var(--accent-primary);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>OwnerIQ Database Debugger</h1>
+    </header>
+    <div class="container">
+        <div class="card">
+            <h2>Verificador de Datos de Propiedades</h2>
+            <p>Esta herramienta verifica que los datos de propiedades se estén guardando correctamente en todas las tablas relacionadas de la base de datos.</p>
+            
+            <div class="form-group">
+                <label for="property-id">ID de la Propiedad</label>
+                <input type="text" id="property-id" placeholder="Ingrese el ID de la propiedad para verificar...">
+            </div>
+            
+            <button id="verify-btn">Verificar Datos</button>
+        </div>
+
+        <div class="results" id="results-container" style="display: none;">
+            <div class="card">
+                <h2>Resultados</h2>
+                <div class="tab-bar">
+                    <div class="tab active" data-tab="overview">Resumen</div>
+                    <div class="tab" data-tab="property">Propiedad</div>
+                    <div class="tab" data-tab="loan">Hipoteca</div>
+                    <div class="tab" data-tab="valuation">Valoración</div>
+                    <div class="tab" data-tab="rent">Renta</div>
+                    <div class="tab" data-tab="operating">Operativos</div>
+                    <div class="tab" data-tab="metrics">Métricas</div>
+                    <div class="tab" data-tab="raw">Datos Raw</div>
+                </div>
+                
+                <div id="tab-overview" class="tab-content active">
+                    <h3>Estado de las Tablas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tabla</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="status-table">
+                            <!-- Se llenará con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="tab-property" class="tab-content">
+                    <h3>Datos Básicos de la Propiedad</h3>
+                    <div class="table-container">
+                        <table id="property-table">
+                            <thead>
+                                <tr>
+                                    <th>Campo</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Se llenará con JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="tab-loan" class="tab-content">
+                    <h3>Datos de Hipoteca</h3>
+                    <div id="loan-container">
+                        <!-- Se llenará con JavaScript -->
+                    </div>
+                </div>
+                
+                <div id="tab-valuation" class="tab-content">
+                    <h3>Datos de Valoración</h3>
+                    <div id="valuation-container">
+                        <!-- Se llenará con JavaScript -->
+                    </div>
+                </div>
+                
+                <div id="tab-rent" class="tab-content">
+                    <h3>Datos de Estimación de Renta</h3>
+                    <div id="rent-container">
+                        <!-- Se llenará con JavaScript -->
+                    </div>
+                </div>
+                
+                <div id="tab-operating" class="tab-content">
+                    <h3>Datos Operativos</h3>
+                    <div id="operating-container">
+                        <!-- Se llenará con JavaScript -->
+                    </div>
+                </div>
+                
+                <div id="tab-metrics" class="tab-content">
+                    <h3>Métricas Financieras</h3>
+                    <div id="metrics-container">
+                        <!-- Se llenará con JavaScript -->
+                    </div>
+                </div>
+                
+                <div id="tab-raw" class="tab-content">
+                    <h3>Datos Raw</h3>
+                    <pre id="raw-data">
+                        <!-- Se llenará con JavaScript -->
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        OwnerIQ - Herramienta de Diagnóstico de Base de Datos
+    </div>
+
+    <script>
+        // Función para cambiar entre tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Quitar active de todos los tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Activar el tab actual
+                this.classList.add('active');
+                document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Función para verificar los datos
+        document.getElementById('verify-btn').addEventListener('click', async function() {
+            const propertyId = document.getElementById('property-id').value;
+            if (!propertyId) {
+                alert('Por favor ingrese un ID de propiedad');
+                return;
+            }
+            
+            // Mostrar contenedor de resultados
+            document.getElementById('results-container').style.display = 'block';
+            
+            try {
+                const response = await fetch(`http://localhost:5000/api/properties/${propertyId}/full-data`, {
+                    headers: { 'Authorization': 'Bearer dummy-token' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayResults(data);
+                } else {
+                    const error = await response.json();
+                    displayError(error);
+                }
+            } catch (error) {
+                displayError({ error: 'Error de conexión al servidor' });
+            }
+        });
+        
+        // Función para mostrar los resultados
+        function displayResults(data) {
+            // Datos raw
+            document.getElementById('raw-data').textContent = JSON.stringify(data, null, 2);
+            
+            // Tabla de estado
+            const statusTable = document.getElementById('status-table');
+            statusTable.innerHTML = '';
+            
+            for (const [key, value] of Object.entries(data.data_exists)) {
+                const row = document.createElement('tr');
+                const tableCell = document.createElement('td');
+                tableCell.textContent = formatTableName(key);
+                
+                const statusCell = document.createElement('td');
+                const statusSpan = document.createElement('span');
+                statusSpan.classList.add('status');
+                
+                if (value) {
+                    statusSpan.classList.add('status-success');
+                    statusSpan.textContent = 'Datos Encontrados';
+                } else {
+                    statusSpan.classList.add('status-error');
+                    statusSpan.textContent = 'Sin Datos';
+                }
+                
+                statusCell.appendChild(statusSpan);
+                row.appendChild(tableCell);
+                row.appendChild(statusCell);
+                statusTable.appendChild(row);
+            }
+            
+            // Datos de la propiedad
+            const propertyTable = document.getElementById('property-table').querySelector('tbody');
+            propertyTable.innerHTML = '';
+            
+            if (data.property) {
+                for (const [key, value] of Object.entries(data.property)) {
+                    const row = document.createElement('tr');
+                    const keyCell = document.createElement('td');
+                    keyCell.textContent = key;
+                    
+                    const valueCell = document.createElement('td');
+                    valueCell.textContent = value;
+                    
+                    row.appendChild(keyCell);
+                    row.appendChild(valueCell);
+                    propertyTable.appendChild(row);
+                }
+            }
+            
+            // Datos de hipoteca
+            const loanContainer = document.getElementById('loan-container');
+            loanContainer.innerHTML = '';
+            
+            if (data.related_data.loans && data.related_data.loans.length > 0) {
+                data.related_data.loans.forEach((loan, index) => {
+                    const loanTable = createTableForData(loan, `Préstamo #${index + 1}`);
+                    loanContainer.appendChild(loanTable);
+                });
+            } else {
+                loanContainer.innerHTML = '<p>No hay datos de hipoteca disponibles.</p>';
+            }
+            
+            // Datos de valoración
+            const valuationContainer = document.getElementById('valuation-container');
+            valuationContainer.innerHTML = '';
+            
+            if (data.related_data.valuations && data.related_data.valuations.length > 0) {
+                data.related_data.valuations.forEach((valuation, index) => {
+                    const valuationTable = createTableForData(valuation, `Valoración #${index + 1}`);
+                    valuationContainer.appendChild(valuationTable);
+                });
+            } else {
+                valuationContainer.innerHTML = '<p>No hay datos de valoración disponibles.</p>';
+            }
+            
+            // Datos de estimación de renta
+            const rentContainer = document.getElementById('rent-container');
+            rentContainer.innerHTML = '';
+            
+            if (data.related_data.rent_estimates && data.related_data.rent_estimates.length > 0) {
+                data.related_data.rent_estimates.forEach((rent, index) => {
+                    const rentTable = createTableForData(rent, `Estimación de Renta #${index + 1}`);
+                    rentContainer.appendChild(rentTable);
+                });
+            } else {
+                rentContainer.innerHTML = '<p>No hay datos de estimación de renta disponibles.</p>';
+            }
+            
+            // Datos operativos
+            const operatingContainer = document.getElementById('operating-container');
+            operatingContainer.innerHTML = '';
+            
+            if (data.related_data.operating_inputs && data.related_data.operating_inputs.length > 0) {
+                data.related_data.operating_inputs.forEach((operating, index) => {
+                    const operatingTable = createTableForData(operating, `Datos Operativos #${index + 1}`);
+                    operatingContainer.appendChild(operatingTable);
+                });
+            } else {
+                operatingContainer.innerHTML = '<p>No hay datos operativos disponibles.</p>';
+            }
+            
+            // Métricas financieras
+            const metricsContainer = document.getElementById('metrics-container');
+            metricsContainer.innerHTML = '';
+            
+            if (data.related_data.metrics && data.related_data.metrics.length > 0) {
+                data.related_data.metrics.forEach((metrics, index) => {
+                    const metricsTable = createTableForData(metrics, `Métricas Financieras #${index + 1}`);
+                    metricsContainer.appendChild(metricsTable);
+                });
+            } else {
+                metricsContainer.innerHTML = '<p>No hay métricas financieras disponibles.</p>';
+            }
+        }
+        
+        // Función para crear una tabla a partir de un objeto de datos
+        function createTableForData(data, title) {
+            const container = document.createElement('div');
+            container.style.marginBottom = '20px';
+            
+            if (title) {
+                const heading = document.createElement('h4');
+                heading.textContent = title;
+                container.appendChild(heading);
+            }
+            
+            const tableContainer = document.createElement('div');
+            tableContainer.className = 'table-container';
+            
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            
+            const keyHeader = document.createElement('th');
+            keyHeader.textContent = 'Campo';
+            headerRow.appendChild(keyHeader);
+            
+            const valueHeader = document.createElement('th');
+            valueHeader.textContent = 'Valor';
+            headerRow.appendChild(valueHeader);
+            
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            const tbody = document.createElement('tbody');
+            
+            for (const [key, value] of Object.entries(data)) {
+                const row = document.createElement('tr');
+                
+                const keyCell = document.createElement('td');
+                keyCell.textContent = key;
+                row.appendChild(keyCell);
+                
+                const valueCell = document.createElement('td');
+                valueCell.textContent = value;
+                row.appendChild(valueCell);
+                
+                tbody.appendChild(row);
+            }
+            
+            table.appendChild(tbody);
+            tableContainer.appendChild(table);
+            container.appendChild(tableContainer);
+            
+            return container;
+        }
+        
+        // Función para mostrar errores
+        function displayError(error) {
+            document.getElementById('raw-data').textContent = JSON.stringify(error, null, 2);
+            document.getElementById('status-table').innerHTML = `
+                <tr>
+                    <td>Error</td>
+                    <td><span class="status status-error">${error.error}</span></td>
+                </tr>
+            `;
+            
+            // Limpiar contenedores
+            document.getElementById('property-table').querySelector('tbody').innerHTML = '';
+            document.getElementById('loan-container').innerHTML = '<p>No disponible debido a un error.</p>';
+            document.getElementById('valuation-container').innerHTML = '<p>No disponible debido a un error.</p>';
+            document.getElementById('rent-container').innerHTML = '<p>No disponible debido a un error.</p>';
+            document.getElementById('operating-container').innerHTML = '<p>No disponible debido a un error.</p>';
+            document.getElementById('metrics-container').innerHTML = '<p>No disponible debido a un error.</p>';
+        }
+        
+        // Función para formatear nombres de tabla
+        function formatTableName(key) {
+            const names = {
+                property: 'Propiedad (property)',
+                loans: 'Hipoteca (property_loan)',
+                valuations: 'Valoración (property_valuation)',
+                rent_estimates: 'Estimación de Renta (property_rent_estimate)',
+                operating_inputs: 'Datos Operativos (property_operating_inputs)',
+                metrics: 'Métricas Financieras (property_metrics)'
+            };
+            
+            return names[key] || key;
+        }
+    </script>
+</body>
+</html>

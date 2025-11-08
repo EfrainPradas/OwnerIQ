@@ -10,6 +10,7 @@ const aiPipelineRouter = require('./routes/ai-pipeline');
 const externalRouter = require('./routes/external');
 const propertyDocumentsRouter = require('./routes/property-documents');
 const mortgageRouter = require('./routes/mortgage');
+const helocRouter = require('./routes/heloc');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 const app = express();
@@ -39,6 +40,7 @@ app.use('/api/ai-pipeline', aiPipelineRouter);
 app.use('/api/external', externalRouter);
 app.use('/api/property-documents', propertyDocumentsRouter);
 app.use('/api/mortgage', mortgageRouter);
+app.use('/api/heloc', authenticateToken, helocRouter);
 registerClientRoutes(app, supabase, authenticateToken);
 
 // Root route
