@@ -17,9 +17,14 @@ import { supabase } from './supabaseClient';
 import './App.css';
 import logo from './logo.png';
 import Onboarding from './components/Auth/Onboarding';
+import ComprehensiveOnboarding from './components/Auth/ComprehensiveOnboarding';
+import LoginScreen from './components/Auth/LoginScreen';
 import PropertiesView from './views/PropertiesView';
 import ClientsView from './components/Clients/ClientsView';
 import MortgageCalculator from './views/MortgageCalculator';
+import PropertyOverview from './components/PropertyCommandCenter/PropertyOverview';
+import MortgageDetails from './components/PropertyCommandCenter/MortgageDetails';
+import PortfolioDashboard from './components/InvestorPortfolio/PortfolioDashboard';
 import { API_BASE_URL, ENABLE_DEMO_MODE } from './config';
 
 /* eslint-disable no-undef */
@@ -41,48 +46,74 @@ function App() {
   const [user, setUser] = useState(null);
   const [properties, setProperties] = useState([]);
   const [currentView, setCurrentView] = useState('dashboard');
+  const [currentPropertyId, setCurrentPropertyId] = useState(null);
+  const [useComprehensiveOnboarding, setUseComprehensiveOnboarding] = useState(true);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [forceOnboarding, setForceOnboarding] = useState(false); // New state to force onboarding
   
   // Initialize auth state from Supabase
   useEffect(() => {
     // Setup Supabase auth listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user || null);
-        setIsLoading(false);
-      }
-    );
-
-    // Initial session check
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      console.log('🔍 ENABLE_DEMO_MODE:', ENABLE_DEMO_MODE);
-      console.log('🔍 Session:', session ? 'exists' : 'null');
-
-      if (!session && ENABLE_DEMO_MODE) {
-        console.log('🚀 Attempting auto-login...');
-        // Auto-login with demo credentials
-        try {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email: 'efrain.pradas@gmail.com',
-            password: '123456',
-          });
-          if (error) throw error;
-          console.log('✅ Auto-login successful!');
-          setUser(data.user);
-        } catch (error) {
-          console.error('❌ Auto-login failed:', error);
-          setUser(null);
-        }
-      } else {
-        setUser(session?.user || null);
-      }
+    const subscription = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
       setIsLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    // Initial session check
+    const session = supabase.auth.session();
+
+    if (session) {
+      setUser(session.user ?? null);
+      // Check if user has completed onboarding
+      (async () => {
+        try {
+          const response = await fetch('http://localhost:5001/api/onboarding/profile', {
+            headers: {
+              'Authorization': `Bearer dummy-token`,
+              'x-demo-mode': 'true'
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log('🔍 Onboarding response:', data);
+            const completed = data.onboarding_status === 'COMPLETED';
+            setOnboardingCompleted(completed);
+            console.log('🔍 Onboarding completed:', completed);
+          }
+        } catch (error) {
+          console.log('Could not check onboarding status:', error);
+          // Default to showing onboarding if we can't check
+          setOnboardingCompleted(false);
+        }
+      })();
+    } else {
+      // No session - set loading to false immediately
+      setIsLoading(false);
+    }
+
+    return () => {
+      if (subscription && typeof subscription.unsubscribe === 'function') {
+        subscription.unsubscribe();
+      }
+    };
   }, []);
 
-  
+  // Handle logout - properly defined in App component scope
+  const appHandleLogout = async () => {
+    if (window.confirm('Are you sure you want to log out?')) {
+      const { error } = await supabase.auth.signOut();
+      if (!error) {
+        // Restablecer el estado de la aplicación
+        setUser(null);
+        setOnboardingCompleted(false);
+        setCurrentView('dashboard');
+      } else {
+        console.error('Error signing out:', error);
+      }
+    }
+  };
 
   return (
     <div className="App">
@@ -94,7 +125,29 @@ function App() {
           </div>
         </div>
       ) : !user ? (
-        <Onboarding setUser={setUser} />
+        <LoginScreen
+          setUser={setUser}
+        />
+      ) : forceOnboarding || !onboardingCompleted ? (
+        useComprehensiveOnboarding ? (
+          <ComprehensiveOnboarding
+            setUser={setUser}
+            onboardingComplete={() => {
+              setOnboardingCompleted(true);
+              setForceOnboarding(false); // Reset force state
+              setCurrentView('dashboard');
+            }}
+          />
+        ) : (
+          <Onboarding
+            setUser={setUser}
+            onboardingComplete={() => {
+              setOnboardingCompleted(true);
+              setForceOnboarding(false); // Reset force state
+              setCurrentView('dashboard');
+            }}
+          />
+        )
       ) : (
         <div>
           <div style={{ display: 'flex', background: 'var(--panel-primary)', padding: '15px', borderBottom: '1px solid var(--border)' }}>
@@ -120,7 +173,7 @@ function App() {
               </h2>
             </div>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              {['dashboard', 'properties', 'clients', 'calculator', 'reports', 'settings'].map(view => (
+              {['dashboard', 'portfolio', 'properties', 'clients', 'calculator', 'reports', 'settings'].map(view => (
                 <button
                   key={view}
                   onClick={() => setCurrentView(view)}
@@ -133,9 +186,49 @@ function App() {
                     cursor: 'pointer'
                   }}
                 >
-                  {view.charAt(0).toUpperCase() + view.slice(1)}
+                  {view === 'dashboard' ? '📊 Dashboard' :
+                   view === 'portfolio' ? '💼 Portfolio' :
+                   view === 'properties' ? '🏠 Properties' :
+                   view === 'clients' ? '👥 Clients' :
+                   view === 'calculator' ? '🧮 Calculator' :
+                   view === 'reports' ? '📈 Reports' :
+                   view === 'settings' ? '⚙️ Settings' :
+                   view.charAt(0).toUpperCase() + view.slice(1)}
                 </button>
               ))}
+              <button
+                onClick={() => setUseComprehensiveOnboarding(!useComprehensiveOnboarding)}
+                style={{
+                  padding: '8px 12px',
+                  background: 'rgba(6, 182, 212, 0.2)',
+                  color: '#06b6d4',
+                  border: '1px solid rgba(6, 182, 212, 0.3)',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem'
+                }}
+              >
+                {useComprehensiveOnboarding ? '🔄 Simple Onboarding' : '🚀 Comprehensive Onboarding'}
+              </button>
+              <button
+                onClick={() => {
+                  if (window.confirm('⚠️ Are you sure you want to force restart the onboarding process? This will reset your onboarding status.')) {
+                    setForceOnboarding(true);
+                    setOnboardingCompleted(false);
+                  }
+                }}
+                style={{
+                  padding: '8px 12px',
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  color: '#ef4444',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem'
+                }}
+              >
+                🔄 Force Onboarding
+              </button>
             </div>
           </div>
           <MainContent
@@ -145,6 +238,9 @@ function App() {
             setProperties={setProperties}
             currentView={currentView}
             setCurrentView={setCurrentView}
+            currentPropertyId={currentPropertyId}
+            setCurrentPropertyId={setCurrentPropertyId}
+            appHandleLogout={appHandleLogout}
           />
         </div>
       )}
@@ -154,9 +250,25 @@ function App() {
 
 // Authentication & User Management moved to Onboarding.js
 
+// eslint-disable-next-line no-undef
+function MainContent({ user, setUser, properties, setProperties, currentView, setCurrentView, currentPropertyId, setCurrentPropertyId, appHandleLogout }) {
 
- // eslint-disable-next-line no-undef
-function MainContent({ user, setUser, properties, setProperties, currentView, setCurrentView }) {
+  const handlePropertyCommandCenterNavigate = (view, propertyId) => {
+    if (propertyId) {
+      setCurrentPropertyId(propertyId);
+    }
+    setCurrentView(view);
+  };
+
+  const handlePortfolioNavigate = (view, params) => {
+    if (view === 'property-details' && params) {
+      setCurrentPropertyId(params);
+      setCurrentView('property-command-center');
+    } else {
+      setCurrentView(view);
+    }
+  };
+
   const renderContent = () => {
     // Calculate portfolio metrics
     const totalValue = properties.reduce((sum, p) => sum + (Number(p.valuation) || 0), 0);
@@ -545,10 +657,30 @@ function MainContent({ user, setUser, properties, setProperties, currentView, se
       return <ClientsView />;
     } else if (currentView === 'calculator') {
       return <MortgageCalculator />;
+    } else if (currentView === 'portfolio') {
+      return <PortfolioDashboard onNavigate={handlePortfolioNavigate} />;
+    } else if (currentView === 'property-command-center') {
+      return (
+        <div className="container">
+          <PropertyOverview
+            propertyId={currentPropertyId || (properties[0]?.property_id)}
+            onNavigate={handlePropertyCommandCenterNavigate}
+          />
+        </div>
+      );
+    } else if (currentView === 'mortgage-details') {
+      return (
+        <div className="container">
+          <MortgageDetails
+            propertyId={currentPropertyId || (properties[0]?.property_id)}
+            onNavigate={handlePropertyCommandCenterNavigate}
+          />
+        </div>
+      );
     } else if (currentView === 'reports') {
-      return <ReportsView />;
+      return <div className="container"><h1>Reports</h1><p>Reports feature coming soon...</p></div>;
     } else if (currentView === 'settings') {
-      return <SettingsView setUser={setUser} />;
+      return <div className="container"><h1>Settings</h1><button onClick={appHandleLogout}>Log Out</button></div>;
     } else {
       return <div className="container"><h1>Dashboard</h1></div>;
     }
@@ -579,7 +711,7 @@ function ReportsView() {
   );
 }
 
-function SettingsView({ setUser }) {
+function SettingsView({ setUser, handleLogout }) {
   const [activeTab, setActiveTab] = useState('profile');
   const [settings, setSettings] = useState({
     notifications: true,
@@ -590,18 +722,6 @@ function SettingsView({ setUser }) {
 
   const handleSettingsChange = (setting, value) => {
     setSettings({ ...settings, [setting]: value });
-  };
-  
-  const handleLogout = async () => {
-    if (window.confirm('Are you sure you want to log out?')) {
-      const { error } = await supabase.auth.signOut();
-      if (!error) {
-        // Restablecer el estado de la aplicaciÃ³n
-        setUser(null);
-      } else {
-        console.error('Error signing out:', error);
-      }
-    }
   };
 
   return (
@@ -661,7 +781,7 @@ function SettingsView({ setUser }) {
           
           {/* BotÃ³n de Logout */}
           <div
-            onClick={handleLogout}
+            onClick={onLogout}
             style={{
               padding: '15px 20px',
               background: 'transparent',
@@ -917,7 +1037,7 @@ function SettingsView({ setUser }) {
                 
                 {/* BotÃ³n de Logout en la secciÃ³n de seguridad */}
                 <button
-                  onClick={handleLogout}
+                  onClick={onLogout}
                   style={{
                     padding: '14px 24px',
                     background: 'var(--error)',

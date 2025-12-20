@@ -24,7 +24,7 @@ function Onboarding({ setUser }) {
   useEffect(() => {
     // Check if user is already authenticated
     async function checkSession() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const session = await supabase.auth.session();
       if (session?.user) {
         checkProfile(session.user);
       }
@@ -90,7 +90,7 @@ function Onboarding({ setUser }) {
     setMessage({ text: '', type: '' });
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signIn({
         email,
         password
       });

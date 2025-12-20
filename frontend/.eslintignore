@@ -1,0 +1,5 @@
+src/components/Auth/ComprehensiveOnboarding.js
+src/components/Auth/Onboarding.js
+src/components/Clients/ClientsView.js
+src/views/PropertiesView.js
+src/views/PropertyLookup.js
