@@ -221,7 +221,7 @@ function HelocDashboard({ property, onClose }) {
 
   const saveValuation = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const session = await supabase.auth.session();
       const token = session?.access_token;
 
       const response = await fetch(`${baseApiUrl}/api/heloc/valuations`, {
@@ -255,7 +255,7 @@ function HelocDashboard({ property, onClose }) {
 
   const saveHelocLine = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const session = await supabase.auth.session();
       const token = session?.access_token;
 
       const response = await fetch(`${baseApiUrl}/api/heloc/lines`, {

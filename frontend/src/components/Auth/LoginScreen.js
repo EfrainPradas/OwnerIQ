@@ -26,8 +26,8 @@ const LoginScreen = ({ setUser }) => {
 
     try {
       if (isLogin) {
-        // Login
-        const { data, error } = await supabase.auth.signIn({
+        // Login - Supabase v2
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password
         });
@@ -68,12 +68,12 @@ const LoginScreen = ({ setUser }) => {
           setUser(data.user);
         }
       } else {
-        // Register - go to onboarding
+        // Register - Supabase v2
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirect: window.location.origin
+            emailRedirectTo: window.location.origin
           }
         });
 

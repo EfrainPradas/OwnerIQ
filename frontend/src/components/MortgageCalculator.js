@@ -60,7 +60,7 @@ function MortgageCalculator({ propertyId, property, onClose }) {
     setError(null);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const session = await supabase.auth.session();
       const token = session?.access_token;
 
       if (!token) {
@@ -215,7 +215,7 @@ function MortgageCalculator({ propertyId, property, onClose }) {
     setError(null);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const session = await supabase.auth.session();
       const token = session?.access_token;
 
       if (!token) {

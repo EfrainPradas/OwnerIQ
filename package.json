@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "@supabase/supabase-js": "^2.89.0",
     "dotenv": "^17.2.3",
+    "node-fetch": "^3.3.2",
     "openai": "^6.3.0",
     "pdf-parse": "^2.2.16"
   }

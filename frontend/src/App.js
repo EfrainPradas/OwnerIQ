@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,7 +13,7 @@ import {
   BarElement,
   Filler,
 } from 'chart.js';
-import { Doughnut, Bar } from 'react-chartjs-2';
+
 import { supabase } from './supabaseClient';
 import './App.css';
 import logo from './logo.png';
@@ -24,7 +25,17 @@ import ClientsView from './components/Clients/ClientsView';
 import MortgageCalculator from './views/MortgageCalculator';
 import PropertyOverview from './components/PropertyCommandCenter/PropertyOverview';
 import MortgageDetails from './components/PropertyCommandCenter/MortgageDetails';
+import AdminView from './views/AdminView';
+
+import Taxes from './components/PropertyCommandCenter/Taxes';
+import Insurance from './components/PropertyCommandCenter/Insurance';
+import Utilities from './components/PropertyCommandCenter/Utilities';
+import Appliances from './components/PropertyCommandCenter/Appliances';
+import Documents from './components/PropertyCommandCenter/Documents';
 import PortfolioDashboard from './components/InvestorPortfolio/PortfolioDashboard';
+import OwnershipStructure from './components/InvestorPortfolio/OwnershipStructure';
+import EntityDetails from './components/InvestorPortfolio/EntityDetails';
+import DashboardView from './views/DashboardView';
 import { API_BASE_URL, ENABLE_DEMO_MODE } from './config';
 
 /* eslint-disable no-undef */
@@ -43,35 +54,62 @@ ChartJS.register(
 );
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [user, setUser] = useState(null);
   const [properties, setProperties] = useState([]);
   const [currentView, setCurrentView] = useState('dashboard');
   const [currentPropertyId, setCurrentPropertyId] = useState(null);
+  const [currentEntityId, setCurrentEntityId] = useState(null);
   const [useComprehensiveOnboarding, setUseComprehensiveOnboarding] = useState(true);
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [forceOnboarding, setForceOnboarding] = useState(false); // New state to force onboarding
-  
+
+  // Sync currentView with URL
+  useEffect(() => {
+    const path = location.pathname.substring(1) || 'dashboard';
+    setCurrentView(path);
+  }, [location.pathname]);
+
+  // Initialize auth state from Supabase
   // Initialize auth state from Supabase
   useEffect(() => {
     // Setup Supabase auth listener
-    const subscription = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
+      if (_event === 'SIGNED_OUT') {
+        setUser(null);
+        setOnboardingCompleted(false);
+        navigate('/dashboard');
+      }
       setIsLoading(false);
     });
 
     // Initial session check
-    const session = supabase.auth.session();
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session) {
+        // Validate that this user actually exists in Auth service
+        const { data: { user: validatedUser }, error: authError } = await supabase.auth.getUser();
 
-    if (session) {
-      setUser(session.user ?? null);
-      // Check if user has completed onboarding
-      (async () => {
+        if (authError || !validatedUser) {
+          console.log('⚠️ Stale session detected, signing out...');
+          await supabase.auth.signOut();
+          setUser(null);
+          setIsLoading(false);
+          return;
+        }
+
+        setUser(session.user ?? null);
+
+        // Check if user has completed onboarding
         try {
+          const { access_token } = session;
           const response = await fetch('http://localhost:5001/api/onboarding/profile', {
             headers: {
-              'Authorization': `Bearer dummy-token`,
-              'x-demo-mode': 'true'
+              'Authorization': `Bearer ${access_token}`,
+              'x-demo-mode': 'false'
             }
           });
 
@@ -79,22 +117,23 @@ function App() {
             const data = await response.json();
             console.log('🔍 Onboarding response:', data);
             const completed = data.onboarding_status === 'COMPLETED';
+            console.log('🔍 onboarding_status:', data.onboarding_status);
+            console.log('🔍 Setting onboardingCompleted to:', completed);
             setOnboardingCompleted(completed);
-            console.log('🔍 Onboarding completed:', completed);
           }
         } catch (error) {
           console.log('Could not check onboarding status:', error);
-          // Default to showing onboarding if we can't check
           setOnboardingCompleted(false);
         }
-      })();
-    } else {
-      // No session - set loading to false immediately
-      setIsLoading(false);
-    }
+        setIsLoading(false);
+      } else {
+        // No session - set loading to false immediately
+        setIsLoading(false);
+      }
+    });
 
     return () => {
-      if (subscription && typeof subscription.unsubscribe === 'function') {
+      if (subscription) {
         subscription.unsubscribe();
       }
     };
@@ -108,12 +147,14 @@ function App() {
         // Restablecer el estado de la aplicación
         setUser(null);
         setOnboardingCompleted(false);
-        setCurrentView('dashboard');
+        navigate('/dashboard');
       } else {
         console.error('Error signing out:', error);
       }
     }
   };
+
+  console.log('🎨 RENDER - user:', !!user, 'isLoading:', isLoading, 'onboardingCompleted:', onboardingCompleted);
 
   return (
     <div className="App">
@@ -128,26 +169,15 @@ function App() {
         <LoginScreen
           setUser={setUser}
         />
-      ) : forceOnboarding || !onboardingCompleted ? (
-        useComprehensiveOnboarding ? (
-          <ComprehensiveOnboarding
-            setUser={setUser}
-            onboardingComplete={() => {
-              setOnboardingCompleted(true);
-              setForceOnboarding(false); // Reset force state
-              setCurrentView('dashboard');
-            }}
-          />
-        ) : (
-          <Onboarding
-            setUser={setUser}
-            onboardingComplete={() => {
-              setOnboardingCompleted(true);
-              setForceOnboarding(false); // Reset force state
-              setCurrentView('dashboard');
-            }}
-          />
-        )
+      ) : !onboardingCompleted ? (
+        <ComprehensiveOnboarding
+          setUser={setUser}
+          onboardingComplete={() => {
+            setOnboardingCompleted(true);
+            setForceOnboarding(false);
+            navigate('/dashboard');
+          }}
+        />
       ) : (
         <div>
           <div style={{ display: 'flex', background: 'var(--panel-primary)', padding: '15px', borderBottom: '1px solid var(--border)' }}>
@@ -176,7 +206,7 @@ function App() {
               {['dashboard', 'portfolio', 'properties', 'clients', 'calculator', 'reports', 'settings'].map(view => (
                 <button
                   key={view}
-                  onClick={() => setCurrentView(view)}
+                  onClick={() => navigate(`/${view}`)}
                   style={{
                     padding: '8px 12px',
                     background: currentView === view ? 'var(--accent-primary)' : 'transparent',
@@ -187,15 +217,29 @@ function App() {
                   }}
                 >
                   {view === 'dashboard' ? '📊 Dashboard' :
-                   view === 'portfolio' ? '💼 Portfolio' :
-                   view === 'properties' ? '🏠 Properties' :
-                   view === 'clients' ? '👥 Clients' :
-                   view === 'calculator' ? '🧮 Calculator' :
-                   view === 'reports' ? '📈 Reports' :
-                   view === 'settings' ? '⚙️ Settings' :
-                   view.charAt(0).toUpperCase() + view.slice(1)}
+                    view === 'portfolio' ? '💼 Portfolio' :
+                      view === 'properties' ? '🏠 Properties' :
+                        view === 'clients' ? '👥 Clients' :
+                          view === 'calculator' ? '🧮 Calculator' :
+                            view === 'reports' ? '📈 Reports' :
+                              view === 'settings' ? '⚙️ Settings' :
+                                view.charAt(0).toUpperCase() + view.slice(1)}
                 </button>
               ))}
+              <button
+                onClick={() => navigate('/admin')}
+                style={{
+                  padding: '8px 12px',
+                  background: currentView === 'admin' ? 'var(--accent-primary)' : 'rgba(239, 68, 68, 0.1)',
+                  color: currentView === 'admin' ? 'white' : '#ef4444',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                🔐 Admin
+              </button>
               <button
                 onClick={() => setUseComprehensiveOnboarding(!useComprehensiveOnboarding)}
                 style={{
@@ -252,404 +296,33 @@ function App() {
 
 // eslint-disable-next-line no-undef
 function MainContent({ user, setUser, properties, setProperties, currentView, setCurrentView, currentPropertyId, setCurrentPropertyId, appHandleLogout }) {
+  const navigate = useNavigate();
 
   const handlePropertyCommandCenterNavigate = (view, propertyId) => {
     if (propertyId) {
       setCurrentPropertyId(propertyId);
     }
-    setCurrentView(view);
+    navigate(`/${view}`);
   };
 
   const handlePortfolioNavigate = (view, params) => {
     if (view === 'property-details' && params) {
       setCurrentPropertyId(params);
-      setCurrentView('property-command-center');
+      navigate('/property-command-center');
+    } else if (view === 'entity-details' && params) {
+      setCurrentEntityId(params);
+      navigate(`/${view}`);
     } else {
-      setCurrentView(view);
+      navigate(`/${view}`);
     }
   };
 
   const renderContent = () => {
-    // Calculate portfolio metrics
-    const totalValue = properties.reduce((sum, p) => sum + (Number(p.valuation) || 0), 0);
-    const totalLoanAmount = properties.reduce((sum, p) => sum + (Number(p.loan_amount) || 0), 0);
-    const totalEquity = totalValue - totalLoanAmount;
-
-    const totalMonthlyRent = properties.reduce((sum, p) => sum + (Number(p.rent) || 0), 0);
-    const totalAnnualRent = totalMonthlyRent * 12;
-
-    // Calculate monthly expenses
-    const totalMonthlyExpenses = properties.reduce((sum, p) => {
-      const monthlyTaxes = (Number(p.taxes) || 0) / 12;
-      const monthlyInsurance = (Number(p.insurance) || 0) / 12;
-      const monthlyHOA = Number(p.hoa) || 0;
-      const monthlyMaintenance = (Number(p.maintenance) || 0) / 100 * (Number(p.rent) || 0);
-      return sum + monthlyTaxes + monthlyInsurance + monthlyHOA + monthlyMaintenance;
-    }, 0);
-
-    const totalAnnualExpenses = totalMonthlyExpenses * 12;
-
-    // Calculate mortgage payments
-    const totalMonthlyMortgage = properties.reduce((sum, p) => sum + (Number(p.monthly_payment) || 0), 0);
-    const totalAnnualMortgage = totalMonthlyMortgage * 12;
-
-    // Net operating income (before mortgage)
-    const annualNOI = totalAnnualRent - totalAnnualExpenses;
-    const monthlyNOI = annualNOI / 12;
-
-    // Cash flow (after mortgage)
-    const monthlyCashFlow = totalMonthlyRent - totalMonthlyExpenses - totalMonthlyMortgage;
-    const annualCashFlow = monthlyCashFlow * 12;
-
-    // Calculate average metrics
-    const avgCapRate = totalValue > 0 ? (annualNOI / totalValue) * 100 : 0;
-    const avgOccupancy = properties.length > 0
-      ? properties.reduce((sum, p) => sum + (100 - (Number(p.vacancy) || 0)), 0) / properties.length
-      : 0;
-    const avgLTV = totalValue > 0 ? (totalLoanAmount / totalValue) * 100 : 0;
-
     if (currentView === 'dashboard') {
       return (
-        <div className="container">
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '20px'
-          }}>
-            <h1 style={{ margin: 0, fontSize: '28px', color: 'var(--accent-primary)' }}>
-              Dashboard <span style={{ fontSize: '18px', color: 'var(--text-muted)', fontWeight: 'normal' }}>Overview</span>
-            </h1>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button
-                className="filter-btn"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: 'var(--panel-secondary)',
-                  boxShadow: 'var(--shadow)',
-                  fontWeight: 'bold'
-                }}
-              >
-                <i className="fas fa-calendar"></i> This Month
-              </button>
-              <button
-                className="filter-btn"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: 'var(--panel-secondary)',
-                  boxShadow: 'var(--shadow)',
-                  fontWeight: 'bold'
-                }}
-              >
-                <i className="fas fa-filter"></i> Filter
-              </button>
-            </div>
-          </div>
-  
-          <div className="grid" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '20px',
-            marginBottom: '30px'
-          }}>
-            {[
-              {
-                title: 'Portfolio Value',
-                value: `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
-                subtitle: `${properties.length} ${properties.length === 1 ? 'property' : 'properties'}`,
-                icon: 'fas fa-building',
-                iconClass: 'icon-primary',
-                metric: avgCapRate > 0 ? `${avgCapRate.toFixed(2)}% Cap Rate` : null
-              },
-              {
-                title: 'Total Equity',
-                value: `$${totalEquity.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
-                subtitle: `${avgLTV.toFixed(1)}% LTV`,
-                icon: 'fas fa-chart-pie',
-                iconClass: 'icon-success',
-                metric: totalLoanAmount > 0 ? `$${totalLoanAmount.toLocaleString()} debt` : 'No debt'
-              },
-              {
-                title: 'Monthly Income',
-                value: `$${totalMonthlyRent.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
-                subtitle: `$${totalAnnualRent.toLocaleString()}/year`,
-                icon: 'fas fa-hand-holding-usd',
-                iconClass: 'icon-success',
-                metric: `${avgOccupancy.toFixed(1)}% occupancy`
-              },
-              {
-                title: 'Operating Expenses',
-                value: `$${totalMonthlyExpenses.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
-                subtitle: `$${totalAnnualExpenses.toLocaleString()}/year`,
-                icon: 'fas fa-receipt',
-                iconClass: 'icon-warning',
-                metric: totalMonthlyRent > 0 ? `${((totalMonthlyExpenses / totalMonthlyRent) * 100).toFixed(1)}% of rent` : null
-              },
-              {
-                title: 'Net Operating Income',
-                value: `${monthlyNOI >= 0 ? '+' : ''}$${Math.abs(monthlyNOI).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
-                subtitle: `${annualNOI >= 0 ? '+' : ''}$${Math.abs(annualNOI).toLocaleString()}/year`,
-                icon: 'fas fa-chart-line',
-                iconClass: monthlyNOI >= 0 ? 'icon-success' : 'icon-error',
-                metric: 'Before debt service'
-              },
-              {
-                title: 'Monthly Cash Flow',
-                value: `${monthlyCashFlow >= 0 ? '+' : ''}$${Math.abs(monthlyCashFlow).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
-                subtitle: `${annualCashFlow >= 0 ? '+' : ''}$${Math.abs(annualCashFlow).toLocaleString()}/year`,
-                icon: 'fas fa-coins',
-                iconClass: monthlyCashFlow >= 0 ? 'icon-success' : 'icon-error',
-                metric: totalMonthlyMortgage > 0 ? `$${totalMonthlyMortgage.toLocaleString()} debt service` : 'No debt service'
-              }
-            ].map((kpi, i) => (
-              <div key={i} className="card" style={{ position: 'relative', overflow: 'hidden' }}>
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '5px',
-                    height: '100%',
-                    background: kpi.iconClass === 'icon-success' ? 'var(--success)' :
-                              kpi.iconClass === 'icon-warning' ? 'var(--warning)' :
-                              kpi.iconClass === 'icon-error' ? 'var(--error)' : 'var(--accent-primary)'
-                  }}
-                />
-                <div className="card-header">
-                  <div className="card-title-group">
-                    <div className={`card-icon ${kpi.iconClass}`}><i className={kpi.icon}></i></div>
-                    <div className="card-title">{kpi.title}</div>
-                  </div>
-                </div>
-                <div className="metric" style={{ marginBottom: '8px' }}>{kpi.value}</div>
-                {kpi.subtitle && (
-                  <div style={{
-                    fontSize: '13px',
-                    color: 'var(--text-muted)',
-                    fontWeight: 600,
-                    marginBottom: '6px'
-                  }}>
-                    {kpi.subtitle}
-                  </div>
-                )}
-                {kpi.metric && (
-                  <div style={{
-                    fontSize: '12px',
-                    color: 'var(--text-secondary)',
-                    background: 'rgba(100, 116, 139, 0.1)',
-                    padding: '6px 10px',
-                    borderRadius: '6px',
-                    display: 'inline-block'
-                  }}>
-                    {kpi.metric}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-  
-          {properties.length > 0 ? (
-            <div className="grid grid-3">
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title-group">
-                    <div className="card-icon icon-success"><i className="fas fa-chart-line"></i></div>
-                    <div className="card-title">Property Values</div>
-                  </div>
-                  <div className="filter-btn">
-                    <i className="fas fa-ellipsis-v"></i>
-                  </div>
-                </div>
-                <div className="chart-container">
-                  <Bar data={{
-                    labels: properties.map(p => p.address || `Property ${properties.indexOf(p) + 1}`),
-                    datasets: [{
-                      label: 'Value ($)',
-                      data: properties.map(p => p.valuation || 0),
-                      backgroundColor: '#22C55E',
-                      borderRadius: 6
-                    }]
-                  }} options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        display: false
-                      }
-                    },
-                    scales: {
-                      y: {
-                        grid: {
-                          color: 'rgba(255, 255, 255, 0.1)',
-                        }
-                      },
-                      x: {
-                        grid: {
-                          display: false
-                        }
-                      }
-                    }
-                  }} />
-                </div>
-              </div>
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title-group">
-                    <div className="card-icon icon-primary"><i className="fas fa-chart-pie"></i></div>
-                    <div className="card-title">Rent Distribution</div>
-                  </div>
-                  <div className="filter-btn">
-                    <i className="fas fa-ellipsis-v"></i>
-                  </div>
-                </div>
-                <div className="chart-container">
-                  <Doughnut data={{
-                    labels: properties.map(p => p.address || `Property ${properties.indexOf(p) + 1}`),
-                    datasets: [{
-                      data: properties.map(p => p.rent || 0),
-                      backgroundColor: ['#6C8AFF', '#22C55E', '#F59E0B', '#EF4444', '#8B5CF6'],
-                      borderWidth: 0,
-                      borderRadius: 6
-                    }]
-                  }} options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                      legend: {
-                        position: 'bottom',
-                        labels: {
-                          boxWidth: 12,
-                          padding: 15
-                        }
-                      }
-                    }
-                  }} />
-                </div>
-              </div>
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title-group">
-                    <div className="card-icon icon-warning"><i className="fas fa-coins"></i></div>
-                    <div className="card-title">Monthly Cash Flow per Property</div>
-                  </div>
-                  <div className="filter-btn">
-                    <i className="fas fa-ellipsis-v"></i>
-                  </div>
-                </div>
-                <div className="chart-container">
-                  <Bar data={{
-                    labels: properties.map(p => {
-                      const address = p.address || `Property ${properties.indexOf(p) + 1}`;
-                      return address.length > 25 ? address.substring(0, 22) + '...' : address;
-                    }),
-                    datasets: [{
-                      label: 'Monthly Cash Flow ($)',
-                      data: properties.map(p => {
-                        const monthlyRent = Number(p.rent) || 0;
-                        const monthlyTaxes = (Number(p.taxes) || 0) / 12;
-                        const monthlyInsurance = (Number(p.insurance) || 0) / 12;
-                        const monthlyHOA = Number(p.hoa) || 0;
-                        const monthlyMaintenance = (Number(p.maintenance) || 0) / 100 * monthlyRent;
-                        const monthlyMortgage = Number(p.monthly_payment) || 0;
-                        const monthlyExpenses = monthlyTaxes + monthlyInsurance + monthlyHOA + monthlyMaintenance;
-                        return monthlyRent - monthlyExpenses - monthlyMortgage;
-                      }),
-                      backgroundColor: properties.map(p => {
-                        const monthlyRent = Number(p.rent) || 0;
-                        const monthlyTaxes = (Number(p.taxes) || 0) / 12;
-                        const monthlyInsurance = (Number(p.insurance) || 0) / 12;
-                        const monthlyHOA = Number(p.hoa) || 0;
-                        const monthlyMaintenance = (Number(p.maintenance) || 0) / 100 * monthlyRent;
-                        const monthlyMortgage = Number(p.monthly_payment) || 0;
-                        const monthlyExpenses = monthlyTaxes + monthlyInsurance + monthlyHOA + monthlyMaintenance;
-                        const cashFlow = monthlyRent - monthlyExpenses - monthlyMortgage;
-                        return cashFlow >= 0 ? '#22C55E' : '#EF4444';
-                      }),
-                      borderRadius: 6
-                    }]
-                  }} options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        display: false
-                      },
-                      tooltip: {
-                        callbacks: {
-                          label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                              label += ': ';
-                            }
-                            if (context.parsed.y !== null) {
-                              label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(context.parsed.y);
-                            }
-                            return label;
-                          }
-                        }
-                      }
-                    },
-                    scales: {
-                      y: {
-                        grid: {
-                          color: 'rgba(255, 255, 255, 0.1)',
-                        },
-                        ticks: {
-                          callback: function(value) {
-                            return '$' + value.toLocaleString();
-                          }
-                        }
-                      },
-                      x: {
-                        grid: {
-                          display: false
-                        }
-                      }
-                    }
-                  }} />
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div style={{
-              padding: '40px',
-              textAlign: 'center',
-              background: 'var(--panel-secondary)',
-              borderRadius: 'var(--border-radius)',
-              marginTop: '30px'
-            }}>
-              <div style={{ fontSize: '48px', color: 'var(--text-muted)', marginBottom: '15px' }}>
-                <i className="fas fa-home"></i>
-              </div>
-              <h2 style={{ marginBottom: '10px', color: 'var(--text-primary)' }}>No properties found</h2>
-              <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>
-                Add your first property to start tracking your real estate portfolio
-              </p>
-              <button
-                onClick={() => setCurrentView('properties')}
-                style={{
-                  padding: '12px 20px',
-                  background: 'var(--accent-primary)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 'var(--border-radius)',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <i className="fas fa-plus"></i> Add Your First Property
-              </button>
-            </div>
-          )}
-        </div>
+        <DashboardView
+          properties={properties}
+        />
       );
     } else if (currentView === 'properties') {
       return <PropertiesView user={user} properties={properties} setProperties={setProperties} />;
@@ -657,6 +330,8 @@ function MainContent({ user, setUser, properties, setProperties, currentView, se
       return <ClientsView />;
     } else if (currentView === 'calculator') {
       return <MortgageCalculator />;
+    } else if (currentView === 'admin') {
+      return <AdminView />;
     } else if (currentView === 'portfolio') {
       return <PortfolioDashboard onNavigate={handlePortfolioNavigate} />;
     } else if (currentView === 'property-command-center') {
@@ -677,6 +352,55 @@ function MainContent({ user, setUser, properties, setProperties, currentView, se
           />
         </div>
       );
+    } else if (currentView === 'taxes') {
+      return (
+        <div className="container">
+          <Taxes
+            propertyId={currentPropertyId || (properties[0]?.property_id)}
+            onNavigate={handlePropertyCommandCenterNavigate}
+          />
+        </div>
+      );
+    } else if (currentView === 'insurance') {
+      return (
+        <div className="container">
+          <Insurance
+            propertyId={currentPropertyId || (properties[0]?.property_id)}
+            onNavigate={handlePropertyCommandCenterNavigate}
+          />
+        </div>
+      );
+    } else if (currentView === 'utilities') {
+      return (
+        <div className="container">
+          <Utilities
+            propertyId={currentPropertyId || (properties[0]?.property_id)}
+            onNavigate={handlePropertyCommandCenterNavigate}
+          />
+        </div>
+      );
+    } else if (currentView === 'appliances') {
+      return (
+        <div className="container">
+          <Appliances
+            propertyId={currentPropertyId || (properties[0]?.property_id)}
+            onNavigate={handlePropertyCommandCenterNavigate}
+          />
+        </div>
+      );
+    } else if (currentView === 'documents') {
+      return (
+        <div className="container">
+          <Documents
+            propertyId={currentPropertyId || (properties[0]?.property_id)}
+            onNavigate={handlePropertyCommandCenterNavigate}
+          />
+        </div>
+      );
+    } else if (currentView === 'ownership') {
+      return <OwnershipStructure onNavigate={handlePortfolioNavigate} />;
+    } else if (currentView === 'entity-details') {
+      return <EntityDetails entityId={currentEntityId} onNavigate={handlePortfolioNavigate} />;
     } else if (currentView === 'reports') {
       return <div className="container"><h1>Reports</h1><p>Reports feature coming soon...</p></div>;
     } else if (currentView === 'settings') {
@@ -771,14 +495,14 @@ function SettingsView({ setUser, handleLogout }) {
               <span style={{ fontWeight: activeTab === tab.id ? '600' : '400' }}>{tab.label}</span>
             </div>
           ))}
-          
+
           {/* Separador */}
           <div style={{
             margin: '15px 20px',
             borderTop: '1px solid var(--border)',
             flex: 1
           }}></div>
-          
+
           {/* BotÃ³n de Logout */}
           <div
             onClick={onLogout}
@@ -801,7 +525,7 @@ function SettingsView({ setUser, handleLogout }) {
 
         <div style={{ flex: 1 }}>
           {activeTab === 'profile' && <ProfileView />}
-          
+
           {activeTab === 'appearance' && (
             <div className="card" style={{ padding: '25px' }}>
               <div style={{
@@ -1034,7 +758,7 @@ function SettingsView({ setUser, handleLogout }) {
                 >
                   <i className="fas fa-key"></i> Change Password
                 </button>
-                
+
                 {/* BotÃ³n de Logout en la secciÃ³n de seguridad */}
                 <button
                   onClick={onLogout}
@@ -1103,8 +827,8 @@ function SettingsView({ setUser, handleLogout }) {
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 
@@ -1135,7 +859,7 @@ function ProfileView() {
     try {
       // Use Supabase to get user profile
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (user) {
         // Get profile data from person table
         const { data: profileData, error: profileError } = await supabase
@@ -1144,7 +868,7 @@ function ProfileView() {
           .eq('person_id', user.id)
           .eq('kind', 'individual')
           .single();
-          
+
         if (profileError && profileError.code !== 'PGRST116') {
           console.error('Error fetching person profile:', profileError);
           setErrorMessage('Error loading profile data');
@@ -1156,14 +880,14 @@ function ProfileView() {
             primary_phone: user.user_metadata?.phone || ''
           });
         }
-        
+
         // Get addresses from person_address table
         const { data: addressData, error: addressError } = await supabase
           .from('person_address')
           .select('*')
           .eq('person_id', user.id)
           .order('is_primary', { ascending: false });
-          
+
         if (addressError) {
           console.error('Error fetching person_addresses:', addressError);
           setErrorMessage('Error loading address data');
@@ -1184,10 +908,10 @@ function ProfileView() {
     setIsSubmitting(true);
     setSuccessMessage('');
     setErrorMessage('');
-    
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (user) {
         // Update auth metadata (name, phone)
         const { error: metadataError } = await supabase.auth.updateUser({
@@ -1196,13 +920,13 @@ function ProfileView() {
             phone: profile.primary_phone
           }
         });
-        
+
         if (metadataError) {
           console.error('Error updating user metadata:', metadataError);
           setErrorMessage('Error updating profile metadata');
           return;
         }
-        
+
         // Check if profile exists and upsert to person table
         const { error: profileError } = await supabase
           .from('person')
@@ -1213,7 +937,7 @@ function ProfileView() {
             primary_phone: profile.primary_phone,
             kind: 'individual'
           });
-          
+
         if (profileError) {
           console.error('Error updating person profile:', profileError);
           setErrorMessage('Error updating profile information');
@@ -1234,10 +958,10 @@ function ProfileView() {
     e.preventDefault();
     setIsSubmitting(true);
     setErrorMessage('');
-    
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (user) {
         if (editingAddressId) {
           // Update existing address in person_address table
@@ -1252,7 +976,7 @@ function ProfileView() {
               is_primary: newAddress.is_primary ? true : false
             })
             .eq('address_id', editingAddressId);
-            
+
           if (error) {
             console.error('Error updating person_address:', error);
             setErrorMessage('Error updating address');
@@ -1265,7 +989,7 @@ function ProfileView() {
                 .eq('person_id', user.id)
                 .neq('address_id', editingAddressId);
             }
-            
+
             setSuccessMessage('Address updated successfully');
             setTimeout(() => setSuccessMessage(''), 3000);
             fetchProfileData();
@@ -1284,7 +1008,7 @@ function ProfileView() {
               postal_code: newAddress.postal_code,
               is_primary: newAddress.is_primary ? true : false
             });
-            
+
           if (error) {
             console.error('Error creating person_address:', error);
             setErrorMessage('Error adding address');
@@ -1296,7 +1020,7 @@ function ProfileView() {
                 .from('person_address')
                 .update({ is_primary: false })
                 .eq('person_id', user.id);
-                
+
               // Luego intentar de nuevo con la direcciÃ³n reciÃ©n creada
               const { data: newAddressData } = await supabase
                 .from('person_address')
@@ -1304,7 +1028,7 @@ function ProfileView() {
                 .eq('person_id', user.id)
                 .eq('line1', newAddress.line1)
                 .single();
-                
+
               if (newAddressData) {
                 // Actualizamos la direcciÃ³n reciÃ©n creada para marcarla como principal
                 await supabase
@@ -1313,7 +1037,7 @@ function ProfileView() {
                   .eq('address_id', newAddressData.address_id);
               }
             }
-            
+
             setSuccessMessage('Address added successfully');
             setTimeout(() => setSuccessMessage(''), 3000);
             fetchProfileData();
@@ -1333,15 +1057,15 @@ function ProfileView() {
     if (!window.confirm('Are you sure you want to delete this address?')) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       const { error } = await supabase
         .from('person_address')
         .delete()
         .eq('address_id', addressId);
-        
+
       if (error) {
         console.error('Error deleting person_address:', error);
         setErrorMessage('Error deleting address');
@@ -1422,7 +1146,7 @@ function ProfileView() {
           {successMessage}
         </div>
       )}
-      
+
       {errorMessage && (
         <div style={{
           padding: '16px',
@@ -1454,7 +1178,7 @@ function ProfileView() {
             <i className="fas fa-user" style={{ fontSize: '20px', color: 'var(--accent-primary)' }}></i>
             <h2 style={{ margin: 0, fontSize: '20px' }}>Personal Information</h2>
           </div>
-          
+
           <form onSubmit={handleProfileUpdate}>
             <div style={{ marginBottom: '20px' }}>
               <label style={{
@@ -1468,7 +1192,7 @@ function ProfileView() {
               <input
                 placeholder="Your full name"
                 value={profile.full_name || ''}
-                onChange={e => setProfile({...profile, full_name: e.target.value})}
+                onChange={e => setProfile({ ...profile, full_name: e.target.value })}
                 required
                 style={{
                   width: '100%',
@@ -1481,7 +1205,7 @@ function ProfileView() {
                 }}
               />
             </div>
-            
+
             <div style={{ marginBottom: '20px' }}>
               <label style={{
                 display: 'block',
@@ -1495,7 +1219,7 @@ function ProfileView() {
                 placeholder="Your email address"
                 type="email"
                 value={profile.primary_email || ''}
-                onChange={e => setProfile({...profile, primary_email: e.target.value})}
+                onChange={e => setProfile({ ...profile, primary_email: e.target.value })}
                 required
                 style={{
                   width: '100%',
@@ -1511,7 +1235,7 @@ function ProfileView() {
                 Changing email may require verification
               </small>
             </div>
-            
+
             <div style={{ marginBottom: '20px' }}>
               <label style={{
                 display: 'block',
@@ -1524,7 +1248,7 @@ function ProfileView() {
               <input
                 placeholder="Your phone number"
                 value={profile.primary_phone || ''}
-                onChange={e => setProfile({...profile, primary_phone: e.target.value})}
+                onChange={e => setProfile({ ...profile, primary_phone: e.target.value })}
                 style={{
                   width: '100%',
                   padding: '12px 16px',
@@ -1536,7 +1260,7 @@ function ProfileView() {
                 }}
               />
             </div>
-            
+
             <button
               type="submit"
               disabled={isSubmitting}
@@ -1570,7 +1294,7 @@ function ProfileView() {
             </button>
           </form>
         </div>
-        
+
         {/* Addresses Section */}
         <div className="card" style={{ padding: '25px' }}>
           <div style={{
@@ -1585,7 +1309,7 @@ function ProfileView() {
               <i className="fas fa-map-marker-alt" style={{ fontSize: '20px', color: 'var(--accent-primary)' }}></i>
               <h2 style={{ margin: 0, fontSize: '20px' }}>Addresses</h2>
             </div>
-            
+
             <button
               type="button"
               onClick={() => {
@@ -1616,7 +1340,7 @@ function ProfileView() {
               )}
             </button>
           </div>
-          
+
           {/* Address Form */}
           {showAddressForm && (
             <form onSubmit={handleAddressSubmit} style={{ marginBottom: '25px' }}>
@@ -1632,7 +1356,7 @@ function ProfileView() {
                 <input
                   placeholder="Street address"
                   value={newAddress.line1 || ''}
-                  onChange={e => setNewAddress({...newAddress, line1: e.target.value})}
+                  onChange={e => setNewAddress({ ...newAddress, line1: e.target.value })}
                   required
                   style={{
                     width: '100%',
@@ -1648,7 +1372,7 @@ function ProfileView() {
                 <input
                   placeholder="Apt, suite, unit, building (optional)"
                   value={newAddress.line2 || ''}
-                  onChange={e => setNewAddress({...newAddress, line2: e.target.value})}
+                  onChange={e => setNewAddress({ ...newAddress, line2: e.target.value })}
                   style={{
                     width: '100%',
                     padding: '12px 16px',
@@ -1660,7 +1384,7 @@ function ProfileView() {
                   }}
                 />
               </div>
-              
+
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
                 <div>
                   <label style={{
@@ -1674,7 +1398,7 @@ function ProfileView() {
                   <input
                     placeholder="City"
                     value={newAddress.city || ''}
-                    onChange={e => setNewAddress({...newAddress, city: e.target.value})}
+                    onChange={e => setNewAddress({ ...newAddress, city: e.target.value })}
                     required
                     style={{
                       width: '100%',
@@ -1699,7 +1423,7 @@ function ProfileView() {
                   <input
                     placeholder="State code (e.g. CA)"
                     value={newAddress.state_code || ''}
-                    onChange={e => setNewAddress({...newAddress, state_code: e.target.value})}
+                    onChange={e => setNewAddress({ ...newAddress, state_code: e.target.value })}
                     required
                     maxLength={2}
                     style={{
@@ -1714,7 +1438,7 @@ function ProfileView() {
                   />
                 </div>
               </div>
-              
+
               <div style={{ marginBottom: '20px' }}>
                 <label style={{
                   display: 'block',
@@ -1727,7 +1451,7 @@ function ProfileView() {
                 <input
                   placeholder="Postal code"
                   value={newAddress.postal_code || ''}
-                  onChange={e => setNewAddress({...newAddress, postal_code: e.target.value})}
+                  onChange={e => setNewAddress({ ...newAddress, postal_code: e.target.value })}
                   required
                   style={{
                     width: '100%',
@@ -1740,7 +1464,7 @@ function ProfileView() {
                   }}
                 />
               </div>
-              
+
               <div style={{ marginBottom: '20px' }}>
                 <label style={{
                   display: 'flex',
@@ -1752,13 +1476,13 @@ function ProfileView() {
                   <input
                     type="checkbox"
                     checked={newAddress.is_primary || false}
-                    onChange={e => setNewAddress({...newAddress, is_primary: e.target.checked})}
+                    onChange={e => setNewAddress({ ...newAddress, is_primary: e.target.checked })}
                     style={{ width: '18px', height: '18px' }}
                   />
                   Set as primary address
                 </label>
               </div>
-              
+
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button
                   type="submit"
@@ -1791,7 +1515,7 @@ function ProfileView() {
                     </>
                   )}
                 </button>
-                
+
                 {editingAddressId && (
                   <button
                     type="button"
@@ -1815,7 +1539,7 @@ function ProfileView() {
               </div>
             </form>
           )}
-          
+
           {/* Address List */}
           {addresses.length === 0 ? (
             <div style={{
@@ -1877,16 +1601,16 @@ function ProfileView() {
                       Primary
                     </div>
                   )}
-                  
+
                   <div style={{ fontSize: '16px', marginBottom: '8px' }}>
                     {address.line1}
                     {address.line2 && <span style={{ display: 'block' }}>{address.line2}</span>}
                   </div>
-                  
+
                   <div style={{ color: 'var(--text-muted)' }}>
                     {address.city}, {address.state_code} {address.postal_code}
                   </div>
-                  
+
                   <div style={{
                     display: 'flex',
                     justifyContent: 'flex-end',
@@ -1911,7 +1635,7 @@ function ProfileView() {
                     >
                       <i className="fas fa-edit"></i> Edit
                     </button>
-                    
+
                     <button
                       onClick={() => handleDeleteAddress(address.address_id)}
                       disabled={isSubmitting || address.is_primary}
@@ -1941,4 +1665,12 @@ function ProfileView() {
 }
 
 
-export default App;
+const AppWithRouter = () => {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+};
+
+export default AppWithRouter;

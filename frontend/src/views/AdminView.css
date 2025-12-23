@@ -1,0 +1,64 @@
+.admin-view {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: 2rem;
+}
+
+.admin-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-title h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 0.5rem 0;
+}
+
+.admin-title p {
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.admin-tab {
+    padding: 1rem 2rem;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.admin-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.admin-tab.active {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.admin-content {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    padding: 2rem;
+    min-height: 600px;
+}

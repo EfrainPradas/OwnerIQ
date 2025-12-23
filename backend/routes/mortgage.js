@@ -26,7 +26,7 @@ const supabase = createClient(
  * POST /api/mortgage/calculate-payment
  * Calculate monthly mortgage payment
  */
-router.post('/calculate-payment', authenticateToken(supabase), async (req, res) => {
+router.post('/calculate-payment', authenticateToken, async (req, res) => {
   try {
     const { loanAmount, annualInterestRate, termYears } = req.body;
 
@@ -58,7 +58,7 @@ router.post('/calculate-payment', authenticateToken(supabase), async (req, res) 
  * POST /api/mortgage/calculate-piti
  * Calculate PITI payment
  */
-router.post('/calculate-piti', authenticateToken(supabase), async (req, res) => {
+router.post('/calculate-piti', authenticateToken, async (req, res) => {
   try {
     const {
       monthlyPaymentPI,
@@ -95,7 +95,7 @@ router.post('/calculate-piti', authenticateToken(supabase), async (req, res) => 
  * POST /api/mortgage/generate-schedule
  * Generate complete amortization schedule and save to database
  */
-router.post('/generate-schedule', authenticateToken(supabase), async (req, res) => {
+router.post('/generate-schedule', authenticateToken, async (req, res) => {
   try {
     const {
       propertyId,
@@ -256,7 +256,7 @@ router.post('/generate-schedule', authenticateToken(supabase), async (req, res) 
  * GET /api/mortgage/schedule/:propertyId
  * Get amortization schedule for a property
  */
-router.get('/schedule/:propertyId', authenticateToken(supabase), async (req, res) => {
+router.get('/schedule/:propertyId', authenticateToken, async (req, res) => {
   try {
     const { propertyId } = req.params;
     const { year, limit } = req.query;
@@ -302,7 +302,7 @@ router.get('/schedule/:propertyId', authenticateToken(supabase), async (req, res
  * GET /api/mortgage/summary/:propertyId
  * Get mortgage summary for a property
  */
-router.get('/summary/:propertyId', authenticateToken(supabase), async (req, res) => {
+router.get('/summary/:propertyId', authenticateToken, async (req, res) => {
   try {
     const { propertyId } = req.params;
     console.log(`🔍 Fetching mortgage summary for property: ${propertyId}`);
@@ -347,7 +347,7 @@ router.get('/summary/:propertyId', authenticateToken(supabase), async (req, res)
  * GET /api/mortgage/yearly-summary/:propertyId
  * Get yearly summary of mortgage payments
  */
-router.get('/yearly-summary/:propertyId', authenticateToken(supabase), async (req, res) => {
+router.get('/yearly-summary/:propertyId', authenticateToken, async (req, res) => {
   try {
     const { propertyId } = req.params;
 
@@ -390,7 +390,7 @@ router.get('/yearly-summary/:propertyId', authenticateToken(supabase), async (re
  * DELETE /api/mortgage/schedule/:propertyId
  * Delete amortization schedule for a property
  */
-router.delete('/schedule/:propertyId', authenticateToken(supabase), async (req, res) => {
+router.delete('/schedule/:propertyId', authenticateToken, async (req, res) => {
   try {
     const { propertyId } = req.params;
 

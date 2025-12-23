@@ -200,6 +200,7 @@ function PropertiesView({ user, properties, setProperties }) {
   const [bulkUploadResults, setBulkUploadResults] = useState(null); // Store AI results
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [filterPurpose, setFilterPurpose] = useState('all'); // 'all', 'primary', 'investment'
   const [sortBy, setSortBy] = useState('recent');
 
   const handleLookupImport = useCallback((lookupData) => {
@@ -430,8 +431,8 @@ function PropertiesView({ user, properties, setProperties }) {
       propertyType: (extractedData.property?.type || '').toLowerCase().includes('single family')
         ? 'residential'
         : (extractedData.property?.type || '').toLowerCase().includes('commercial')
-        ? 'commercial'
-        : 'residential',
+          ? 'commercial'
+          : 'residential',
       valuation: extractedData.financial?.purchase_price || extractedData.property?.value || '',
       closingDate: extractedData.financial?.closing_date || '',
       loanAmount: extractedData.loan?.amount || '',
@@ -1289,7 +1290,7 @@ function PropertiesView({ user, properties, setProperties }) {
   };
 
   const handleSubmitClick = () => {
-    const event = { preventDefault: () => {} };
+    const event = { preventDefault: () => { } };
     handleSubmit(event);
   };
 
@@ -2002,6 +2003,15 @@ function PropertiesView({ user, properties, setProperties }) {
       filtered = filtered.filter(p => p.property_type === filterType);
     }
 
+    // Purpose filter (Primary Residence vs Investment)
+    if (filterPurpose !== 'all') {
+      if (filterPurpose === 'primary') {
+        filtered = filtered.filter(p => p.is_primary_residence === true);
+      } else if (filterPurpose === 'investment') {
+        filtered = filtered.filter(p => p.is_primary_residence === false || p.is_primary_residence === null);
+      }
+    }
+
     // Sorting
     switch (sortBy) {
       case 'value-high':
@@ -2023,7 +2033,7 @@ function PropertiesView({ user, properties, setProperties }) {
     }
 
     return filtered;
-  }, [properties, searchTerm, filterType, sortBy]);
+  }, [properties, searchTerm, filterType, filterPurpose, sortBy]);
 
   return (
     <div style={{ padding: '0 20px', maxWidth: '1800px', margin: '0 auto' }}>
@@ -2157,6 +2167,30 @@ function PropertiesView({ user, properties, setProperties }) {
             </select>
           </div>
 
+          {/* Purpose Filter (Primary vs Investment) */}
+          <div>
+            <select
+              value={filterPurpose}
+              onChange={(e) => setFilterPurpose(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                border: '1px solid var(--border)',
+                borderRadius: '10px',
+                background: 'var(--panel-secondary)',
+                color: 'var(--text-primary)',
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                outline: 'none'
+              }}
+            >
+              <option value="all">🏘️ All Properties</option>
+              <option value="primary">🏠 Primary Residence</option>
+              <option value="investment">💼 Investment</option>
+            </select>
+          </div>
+
           {/* Sort By */}
           <div>
             <select
@@ -2240,12 +2274,13 @@ function PropertiesView({ user, properties, setProperties }) {
             <i className={`fas ${showLookup ? 'fa-eye-slash' : 'fa-search'}`}></i>
             {showLookup ? 'Hide Search' : 'Search MLS'}
           </button>
-          {(searchTerm || filterType !== 'all' || sortBy !== 'recent') && (
+          {(searchTerm || filterType !== 'all' || filterPurpose !== 'all' || sortBy !== 'recent') && (
             <button
               type="button"
               onClick={() => {
                 setSearchTerm('');
                 setFilterType('all');
+                setFilterPurpose('all');
                 setSortBy('recent');
               }}
               style={{
@@ -2287,30 +2322,30 @@ function PropertiesView({ user, properties, setProperties }) {
       )}
 
       {successMessage && (
-        <div style={{ 
-          padding: '12px', 
-          marginBottom: '16px', 
-          background: '#10B981', 
-          color: 'white', 
-          borderRadius: '8px' 
+        <div style={{
+          padding: '12px',
+          marginBottom: '16px',
+          background: '#10B981',
+          color: 'white',
+          borderRadius: '8px'
         }}>
           {successMessage}
         </div>
       )}
       {errorMessage && (
-        <div style={{ 
-          padding: '12px', 
-          marginBottom: '16px', 
-          background: '#EF4444', 
-          color: 'white', 
-          borderRadius: '8px' 
+        <div style={{
+          padding: '12px',
+          marginBottom: '16px',
+          background: '#EF4444',
+          color: 'white',
+          borderRadius: '8px'
         }}>
           {errorMessage}
         </div>
       )}
-      
+
       {showForm && renderForm()}
-      
+
       {/* Properties Grid */}
       <div style={{ marginTop: '24px' }}>
         {properties.length === 0 ? (
@@ -2362,6 +2397,7 @@ function PropertiesView({ user, properties, setProperties }) {
               onClick={() => {
                 setSearchTerm('');
                 setFilterType('all');
+                setFilterPurpose('all');
                 setSortBy('recent');
               }}
               style={{

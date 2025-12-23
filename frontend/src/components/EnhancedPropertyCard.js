@@ -179,6 +179,26 @@ const EnhancedPropertyCard = ({
             }}>
               {property.property_type || 'Residential'}
             </div>
+            {/* Primary/Investment Badge */}
+            <div style={{
+              padding: '4px 10px',
+              background: property.is_primary_residence
+                ? 'rgba(16, 185, 129, 0.15)'
+                : 'rgba(245, 158, 11, 0.15)',
+              borderRadius: '6px',
+              fontSize: '10px',
+              fontWeight: 600,
+              color: property.is_primary_residence ? '#10B981' : '#F59E0B',
+              border: `1px solid ${property.is_primary_residence ? '#10B981' : '#F59E0B'}`,
+              textTransform: 'uppercase',
+              letterSpacing: '0.3px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              <span>{property.is_primary_residence ? '🏠' : '💼'}</span>
+              <span>{property.is_primary_residence ? 'Primary' : 'Investment'}</span>
+            </div>
             <div style={{
               padding: '4px 10px',
               background: performanceBadge.bgColor,

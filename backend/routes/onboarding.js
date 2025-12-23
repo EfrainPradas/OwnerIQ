@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
+const OnboardingEventLogger = require('../utils/OnboardingEventLogger');
 
 // Middleware to check if user is demo user
 const isDemoUser = (req) => {
   return req.headers['x-demo-mode'] === 'true' ||
-         (req.user && req.user.id === 'dummy-id');
+    (req.user && req.user.id === 'dummy-id');
 };
 
 // Helper function to parse numeric values safely
@@ -24,13 +25,27 @@ router.get('/profile', authenticateToken, async (req, res) => {
     const userId = isDemoUser(req) ? null : req.user.id;
     console.log('🔍 Looking for profile with userId:', userId);
 
-    let query = supabase
+    const { createClient } = require('@supabase/supabase-js');
+    const scopedSupabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: {
+            Authorization: req.headers['authorization']
+          }
+        }
+      }
+    );
+
+    // Use scoped client for query
+    let query = (isDemoUser(req) ? supabase : scopedSupabase)
       .from('user_profiles')
       .select('*')
       .eq('user_id', userId);
 
     if (isDemoUser(req)) {
-      query = query.is('user_id', null);
+      query = supabase.from('user_profiles').select('*').is('user_id', null);
     }
 
     const { data: profile, error } = await query.maybeSingle();
@@ -44,7 +59,10 @@ router.get('/profile', authenticateToken, async (req, res) => {
     // Create profile if doesn't exist (for both demo and regular users)
     if (!profile) {
       console.log('🔍 Creating profile for userId:', userId);
-      const { data: newProfile, error: createError } = await supabase
+
+      const insertClient = isDemoUser(req) ? supabase : scopedSupabase;
+
+      const { data: newProfile, error: createError } = await insertClient
         .from('user_profiles')
         .insert({
           user_id: userId,
@@ -61,10 +79,31 @@ router.get('/profile', authenticateToken, async (req, res) => {
         .single();
 
       if (createError) {
+        // If we hit a race condition or primary key conflict, it means profile exists
+        if (createError.code === '23505') { // Postgres duplicate key error code
+          console.log('⚠️ Profile created concurrently, fetching existing record...');
+          const { data: existingProfile, error: fetchError } = await insertClient
+            .from('user_profiles')
+            .select('*')
+            .eq('user_id', userId)
+            .single();
+
+          if (fetchError) throw fetchError;
+          return res.json(existingProfile);
+        }
+
         console.error('🔍 Error creating profile:', createError);
         throw createError;
       }
       console.log('🔍 Profile created successfully');
+
+      // Log profile creation
+      const eventLogger = new OnboardingEventLogger(scopedSupabase);
+      await eventLogger.logProfileCreated(userId, {
+        owner_name: newProfile.owner_name,
+        user_type: newProfile.user_type
+      });
+
       return res.json(newProfile);
     }
 
@@ -72,9 +111,20 @@ router.get('/profile', authenticateToken, async (req, res) => {
     res.json(profile);
   } catch (error) {
     console.error('Error fetching user profile:', error);
+    const fs = require('fs');
+    fs.appendFileSync('error.log', `${new Date().toISOString()} - GET Profile Error: ${error.message}\n${error.stack}\nDetails: ${JSON.stringify(error)}\n\n`);
     res.status(500).json({ error: 'Failed to fetch user profile', details: error.message });
   }
 });
+
+const { createClient } = require('@supabase/supabase-js');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+const DocumentPipeline = require('../ai-pipeline'); // Import the AI pipeline
+const pipeline = new DocumentPipeline();
+
+// ... (other imports)
 
 // POST /api/onboarding/profile - Update user profile
 router.post('/profile', authenticateToken, async (req, res) => {
@@ -92,46 +142,101 @@ router.post('/profile', authenticateToken, async (req, res) => {
       current_step
     } = req.body;
 
-    const profileData = {
-      user_id: userId,
-      owner_name: owner_name?.trim(),
-      owner_email: owner_email?.trim().toLowerCase(),
-      owner_phone: owner_phone?.trim(),
-      user_type,
-      has_primary_residence: has_primary_residence || false,
-      investment_property_count: parseNumeric(investment_property_count) || 0,
-      onboarding_status: onboarding_status || 'IN_PROGRESS',
-      current_step: parseNumeric(current_step) || 1,
+    console.log(`📝 Update profile for ${userId || 'demo'}:`, { owner_email, user_type });
+
+    // Build update object only with provided fields
+    const updates = {
       updated_at: new Date().toISOString()
     };
 
+    // Only add fields if they are defined AND, importantly, not null.
+    // We treat null as "do not update" to respect database constraints.
+    if (owner_name !== undefined && owner_name !== null) updates.owner_name = owner_name.trim();
+    if (owner_email !== undefined && owner_email !== null) updates.owner_email = owner_email.trim().toLowerCase();
+    if (owner_phone !== undefined && owner_phone !== null) updates.owner_phone = owner_phone.trim();
+    if (user_type !== undefined && user_type !== null) updates.user_type = user_type;
+
+    // Boolean and Number fields - check for undefined/null but allow internal falsy values (like 0 or false) if valid.
+    if (has_primary_residence !== undefined && has_primary_residence !== null) updates.has_primary_residence = has_primary_residence;
+
+    // Parse numeric fields safely. If parseNumeric returns null/NaN, DO NOT update the field.
+    if (investment_property_count !== undefined && investment_property_count !== null) {
+      const parsedInv = parseNumeric(investment_property_count);
+      if (!isNaN(parsedInv)) updates.investment_property_count = parsedInv;
+    }
+
+    if (onboarding_status !== undefined && onboarding_status !== null) updates.onboarding_status = onboarding_status;
+
+    if (current_step !== undefined && current_step !== null) {
+      const parsedStep = parseNumeric(current_step);
+      if (!isNaN(parsedStep)) updates.current_step = parsedStep;
+    }
+
+    console.log(`📝 Update profile for ${userId || 'demo'}:`, updates);
+
+    // Use the global admin supabase client for profile updates to avoid RLS issues with custom claims
+    // or simply use the existing authenticated client strategy if that was the intent.
+    // However, creating a new client on every request is expensive and prone to env issues.
+    // Let's rely on the service_role client if we are admin, or the user's token.
+
+    // For now, let's try using the existing 'supabase' client from locals which is the ADMIN/SERVICE client 
+    // IF it was initialized with service role key (usually it's ANON key).
+    // If it's ANON, it won't work for UPSERT if RLS blocks it unless we have the user's JWT.
+
+    // Debugging RLS client creation:
+    // console.log('Auth Header:', req.headers['authorization'] ? 'Present' : 'Missing');
+    // console.log('Supabase URL:', process.env.SUPABASE_URL ? 'Set' : 'Missing');
+
+    const scopedSupabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: {
+            Authorization: req.headers['authorization']
+          }
+        }
+      }
+    );
+
     let query;
     if (isDemoUser(req)) {
-      // For demo mode, upsert without user_id
-      query = supabase
+      query = scopedSupabase
         .from('user_profiles')
-        .upsert({ ...profileData, user_id: null }, {
-          onConflict: 'owner_email'
-        })
+        .update(updates)
+        .eq('owner_email', 'demo@owneriq.com')
         .select()
         .single();
     } else {
-      query = supabase
+      // Use scoped client (authenticated as user)
+      console.log('🔍 Updating profile for userId:', userId);
+
+      // Use strict UPDATE because the profile must exist by now (created in GET /profile or step 1).
+      // Using UPSERT with incomplete data can fail not-null constraints if it tries to INSERT.
+      query = scopedSupabase
         .from('user_profiles')
-        .upsert(profileData, {
-          onConflict: 'user_id'
-        })
+        .update(updates)
+        .eq('user_id', userId)
         .select()
         .single();
     }
 
     const { data: profile, error } = await query;
 
-    if (error) throw error;
+    if (error) {
+      console.error('❌ Supabase Error:', error);
+      throw error;
+    }
+
+    // Log profile update
+    const eventLogger = new OnboardingEventLogger(scopedSupabase);
+    await eventLogger.logProfileUpdated(userId, updates);
 
     res.json({ success: true, profile });
   } catch (error) {
     console.error('Error updating user profile:', error);
+    const fs = require('fs');
+    fs.appendFileSync('error.log', `${new Date().toISOString()} - Profile Error: ${error.message}\n${error.stack}\n\n`);
     res.status(500).json({ error: 'Failed to update user profile', details: error.message });
   }
 });
@@ -437,6 +542,7 @@ router.get('/document-types', authenticateToken, async (req, res) => {
 });
 
 // POST /api/onboarding/upload - Upload document
+// POST /api/onboarding/upload - Upload document and process with AI
 router.post('/upload', authenticateToken, async (req, res) => {
   const supabase = req.app.locals.supabase;
   try {
@@ -448,7 +554,24 @@ router.post('/upload', authenticateToken, async (req, res) => {
       file_data // Base64 encoded file data
     } = req.body;
 
-    // Validate batch belongs to user
+    // Initialize scoped client for RLS
+    const { createClient } = require('@supabase/supabase-js');
+    const scopedSupabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: {
+            Authorization: req.headers['authorization']
+          }
+        }
+      }
+    );
+
+    // Initialize event logger
+    const eventLogger = new OnboardingEventLogger(scopedSupabase);
+
+    // Validate or Create Batch
     let batchQuery = supabase
       .from('import_batches')
       .select('user_id, status')
@@ -458,72 +581,221 @@ router.post('/upload', authenticateToken, async (req, res) => {
       batchQuery = batchQuery.eq('user_id', userId);
     }
 
-    const { data: batch, error: batchError } = await batchQuery.single();
+    let { data: batch, error: batchError } = await batchQuery.maybeSingle();
 
-    if (batchError || !batch) {
-      return res.status(404).json({ error: 'Import batch not found' });
+    if (!batch) {
+      console.log(`⚠️ Batch ${batch_id} not found. Creating new batch...`);
+      // Create new batch on the fly
+      const { data: newBatch, error: createError } = await scopedSupabase
+        .from('import_batches')
+        .insert({
+          batch_id,
+          user_id: userId,
+          property_type: 'investment',
+          status: 'PENDING',
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (createError) {
+        // Handle race condition - batch might have been created between our check and insert
+        if (createError.code === '23505') {
+          console.log('⚠️ Batch created concurrently, fetching existing...');
+          const { data: existingBatch } = await batchQuery.single();
+          batch = existingBatch;
+        } else {
+          console.error('Failed to create batch (Details):', JSON.stringify(createError, null, 2));
+          await eventLogger.logError(userId, 'batch_creation_failed', createError.message, {
+            batch_id,
+            error_code: createError.code
+          });
+          return res.status(500).json({ error: 'Failed to create import batch', details: createError });
+        }
+      } else {
+        batch = newBatch;
+        // Log batch creation
+        await eventLogger.logBatchCreated(userId, batch_id, 'investment');
+      }
     }
 
-    if (batch.status !== 'PENDING' && batch.status !== 'UPLOADING') {
-      return res.status(400).json({ error: 'Batch is not in uploadable state' });
+    // Prepare file data
+    const buffer = Buffer.from(file_data, 'base64');
+    const fileSize = buffer.length;
+
+    // Get document type name from doc_type_id (closing, mortgage, etc.)
+    const { data: docType } = await scopedSupabase
+      .from('document_types')
+      .select('name')
+      .eq('doc_type_id', doc_type_id)
+      .single();
+
+    // Create descriptive filename: DocumentType_UserID.pdf
+    const docTypeName = docType?.name || doc_type_id;
+    const userIdShort = userId.substring(0, 8); // First 8 chars of UUID
+    const cleanDocType = docTypeName.replace(/\s+/g, '_'); // Replace spaces with underscores
+    const descriptiveFilename = `${cleanDocType}_${userIdShort}.pdf`;
+
+    // Upload to Supabase Storage
+    const storagePath = `${userId}/${batch_id}/${descriptiveFilename}`;
+    const { data: storageData, error: storageError } = await scopedSupabase
+      .storage
+      .from('property-documents')
+      .upload(storagePath, buffer, {
+        contentType: 'application/pdf',
+        upsert: true // Allow overwriting if same doc is uploaded again
+      });
+
+    if (storageError) {
+      console.error('Storage upload error:', storageError);
+      await eventLogger.logUploadError(userId, batch_id, doc_type_id, storageError);
+      return res.status(500).json({ error: 'Failed to upload file to storage', details: storageError });
     }
 
-    // In a real implementation, you would:
-    // 1. Decode base64 file data
-    // 2. Validate file size and type
-    // 3. Upload to storage service (S3, Supabase Storage, etc.)
-    // 4. Store file path in database
+    // Log successful storage upload
+    await eventLogger.logStorageUploadSuccess(userId, batch_id, doc_type_id, storagePath);
 
-    // For now, simulate file upload
-    const filePath = `imports/${userId || 'demo'}/${batch_id}/${Date.now()}_${filename}`;
-    const fileSize = Buffer.from(file_data, 'base64').length;
+    // Get public URL
+    const { data: { publicUrl } } = scopedSupabase
+      .storage
+      .from('property-documents')
+      .getPublicUrl(storagePath);
 
-    const uploadData = {
-      batch_id,
-      doc_type_id,
-      filename: `${Date.now()}_${filename}`,
-      original_filename: filename,
-      file_path: filePath,
-      file_size_bytes: fileSize,
-      mime_type: 'application/pdf', // Detect from file
-      upload_status: 'UPLOADED',
-      created_at: new Date().toISOString()
-    };
+    console.log(`✅ File uploaded to storage: ${storagePath}`);
 
-    const { data: upload, error: uploadError } = await supabase
+    // 1. Create upload record with real storage path
+    const { data: upload, error: uploadError } = await scopedSupabase
       .from('document_uploads')
-      .insert(uploadData)
-      .select()
-      .single();
-
-    if (uploadError) throw uploadError;
-
-    // Update batch status and document count
-    const { data: updatedBatch, error: updateError } = await supabase
-      .from('import_batches')
-      .update({
-        status: 'UPLOADING',
-        documents_completed: supabase.raw('documents_completed + 1'),
-        updated_at: new Date().toISOString()
+      .insert({
+        batch_id,
+        doc_type_id,
+        filename: descriptiveFilename,
+        original_filename: filename,
+        file_path: storagePath, // Real path in Supabase Storage
+        file_size_bytes: fileSize,
+        mime_type: 'application/pdf',
+        upload_status: 'PROCESSING',
+        created_at: new Date().toISOString()
       })
-      .eq('batch_id', batch_id)
       .select()
       .single();
 
-    if (updateError) throw updateError;
+    if (uploadError) {
+      await eventLogger.logError(userId, 'document_upload_db_failed', uploadError.message, {
+        batch_id,
+        doc_type_id,
+        error_code: uploadError.code
+      });
+      throw uploadError;
+    }
+
+    // Log successful document upload
+    await eventLogger.logDocumentUploaded(userId, batch_id, upload.upload_id, doc_type_id, {
+      filename: descriptiveFilename,
+      size_bytes: fileSize,
+      storage_path: storagePath
+    });
+
+
+    console.log(`✅ Document uploaded successfully: ${upload.upload_id}`);
+
+    // ========================================
+    // AI PROCESSING DISABLED
+    // ========================================
+    // El procesamiento AI se hará manualmente desde la consola de administración
+    // Cuando esté listo, descomentar este bloque y configurar OPENAI_API_KEY
+
+    /*
+    // 2. Trigger AI Extraction (Async)
+    // Use the DocumentPipeline to process the file
+    (async () => {
+      let tempFilePath = null;
+      try {
+        // Create temp file
+        const tempDir = os.tmpdir();
+        tempFilePath = path.join(tempDir, `upload_${Date.now()}_${filename}`);
+        fs.writeFileSync(tempFilePath, buffer);
+
+        console.log(`🤖 Processing document ${upload.upload_id} with AI Pipeline...`);
+
+        // Log processing start
+        await eventLogger.logDocumentProcessingStarted(userId, batch_id, upload.upload_id, doc_type_id);
+
+        // Execute Pipeline
+        const result = await pipeline.process(tempFilePath, {
+          metadata: {
+            user_id: userId,
+            batch_id: batch_id,
+            original_filename: filename
+          }
+        });
+
+        console.log(`✅ AI Extraction complete for ${upload.upload_id}. Type: ${result.document_type}`);
+
+        // 3. Update upload record with results
+        await scopedSupabase
+          .from('document_uploads')
+          .update({
+            upload_status: 'PROCESSED',
+            extracted_data: result.extracted_data,
+            ai_confidence: result.extraction_confidence || 0.95,
+            validation_errors: result.validation ? result.validation.errors : null,
+            processed_at: new Date().toISOString()
+          })
+          .eq('upload_id', upload.upload_id);
+
+        // Log successful processing
+        await eventLogger.logDocumentProcessed(userId, batch_id, upload.upload_id, doc_type_id, result.extracted_data);
+
+        // 4. Update core tables if data found (Simplified mapping)
+        // This is where valid data would be synced to property/mortgage tables
+        // For now we persist the extracted JSON in the uploads table for review
+
+      } catch (err) {
+        console.error('❌ AI Pipeline Error:', err);
+
+        // Update status to FAILED
+        await supabase
+          .from('document_uploads')
+          .update({
+            upload_status: 'FAILED',
+            validation_errors: { error: err.message },
+            processed_at: new Date().toISOString()
+          })
+          .eq('upload_id', upload.upload_id);
+
+        // Log processing failure
+        await eventLogger.logDocumentProcessingFailed(userId, batch_id, upload.upload_id, doc_type_id, err);
+
+      } finally {
+        // Cleanup temp file
+        if (tempFilePath && fs.existsSync(tempFilePath)) {
+          try {
+            fs.unlinkSync(tempFilePath);
+          } catch (e) {
+            console.error('Failed to clean up temp file:', e);
+          }
+        }
+      }
+    })();
+    */
 
     res.json({
       success: true,
-      upload: {
-        ...upload,
-        batch: updatedBatch
-      }
+      message: 'Upload started',
+      upload_id: upload.upload_id
     });
+
+
   } catch (error) {
-    console.error('Error uploading document:', error);
+    console.error('❌ Error uploading document:');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Full error:', JSON.stringify(error, null, 2));
     res.status(500).json({ error: 'Failed to upload document', details: error.message });
   }
 });
+
 
 // POST /api/onboarding/batches/:id/complete - Complete onboarding batch
 router.post('/batches/:id/complete', authenticateToken, async (req, res) => {

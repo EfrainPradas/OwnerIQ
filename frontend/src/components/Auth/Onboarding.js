@@ -3,16 +3,16 @@ import { supabase } from '../../supabaseClient';
 import logo from '../../logo.png';
 import './Onboarding.css';
 
-function Onboarding({ setUser }) {
+function Onboarding({ setUser, onboardingComplete }) {
   const [activeStep, setActiveStep] = useState('welcome');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
-  
+
   // Auth data
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
+
   // Profile data
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -24,7 +24,7 @@ function Onboarding({ setUser }) {
   useEffect(() => {
     // Check if user is already authenticated
     async function checkSession() {
-      const session = await supabase.auth.session();
+      const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         checkProfile(session.user);
       }
@@ -44,8 +44,11 @@ function Onboarding({ setUser }) {
       // No profile found, go to profile creation step
       setActiveStep('create-profile');
     } else {
-      // Profile exists, complete the signin
+      // Profile exists, complete the onboarding
       setUser({ ...user, ...data });
+      if (onboardingComplete) {
+        onboardingComplete();
+      }
     }
   };
 
@@ -66,12 +69,12 @@ function Onboarding({ setUser }) {
         email,
         password,
         options: {
-          emailRedirect: window.location.origin
+          emailRedirectTo: window.location.origin
         }
       });
-      
+
       if (error) throw error;
-      
+
       setMessage({
         text: 'Registration successful! Please check your email for verification link.',
         type: 'success'
@@ -90,13 +93,13 @@ function Onboarding({ setUser }) {
     setMessage({ text: '', type: '' });
 
     try {
-      const { data, error } = await supabase.auth.signIn({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
-      
+
       if (error) throw error;
-      
+
       // Check if user has completed profile setup
       if (data?.user) {
         await checkProfile(data.user);
@@ -149,12 +152,14 @@ function Onboarding({ setUser }) {
             postal_code: zipCode,
             country_code: 'US',
             is_primary: true
-          }); 
-        
+          });
+
         if (addressError) throw addressError;
       }
 
       // Create a default investor profile
+      // COMMENTED OUT: investor_profile table doesn't exist
+      /*
       const { error: profileError } = await supabase
         .from('investor_profile')
         .insert({
@@ -162,18 +167,20 @@ function Onboarding({ setUser }) {
           kyc_status: 'pending',
           risk_tolerance: 'moderate'
         });
-      
+
       if (profileError) throw profileError;
+      */
 
       setMessage({ text: 'Profile created successfully!', type: 'success' });
       setUser({ ...user, ...personData });
-      
+
       // Wait a moment to show success message before redirecting
       setTimeout(() => {
-        // The parent component will handle redirecting to the dashboard
-        // when setUser is called with a valid user object
+        if (onboardingComplete) {
+          onboardingComplete();
+        }
       }, 1500);
-      
+
     } catch (error) {
       setMessage({ text: error.message, type: 'error' });
       setLoading(false);
@@ -189,9 +196,9 @@ function Onboarding({ setUser }) {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: window.location.origin
       });
-      
+
       if (error) throw error;
-      
+
       setMessage({
         text: 'Password reset instructions sent to your email',
         type: 'success'
@@ -211,28 +218,28 @@ function Onboarding({ setUser }) {
       </div>
       <h2>Your property management solution</h2>
       <p>Manage your properties, tenants, mortgages, and more - all in one place.</p>
-      
+
       <div className="welcome-buttons">
-        <button 
+        <button
           onClick={() => setActiveStep('sign-in')}
           className="btn btn-primary"
         >
           Sign In
         </button>
-        <button 
+        <button
           onClick={() => setActiveStep('sign-up')}
           className="btn btn-outline"
         >
           Create Account
         </button>
       </div>
-      
+
       <div className="demo-mode">
-        <button 
+        <button
           onClick={() => {
             setEmail('demo@example.com');
             setPassword('demo123');
-            handleSignIn({ preventDefault: () => {} });
+            handleSignIn({ preventDefault: () => { } });
           }}
           className="btn btn-text"
         >
@@ -245,13 +252,13 @@ function Onboarding({ setUser }) {
   const renderSignUpStep = () => (
     <div className="onboarding-form">
       <h2>Create your account</h2>
-      
+
       {message.text && (
         <div className={`message ${message.type}`}>
           {message.text}
         </div>
       )}
-      
+
       <form onSubmit={handleSignUp}>
         <div className="form-group">
           <label htmlFor="email">Email Address</label>
@@ -263,7 +270,7 @@ function Onboarding({ setUser }) {
             required
           />
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
@@ -274,7 +281,7 @@ function Onboarding({ setUser }) {
             required
           />
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="confirmPassword">Confirm Password</label>
           <input
@@ -285,16 +292,16 @@ function Onboarding({ setUser }) {
             required
           />
         </div>
-        
-        <button 
-          type="submit" 
+
+        <button
+          type="submit"
           className="btn btn-primary"
           disabled={loading}
         >
           {loading ? 'Creating account...' : 'Create Account'}
         </button>
       </form>
-      
+
       <div className="form-footer">
         <p>Already have an account? <button onClick={() => setActiveStep('sign-in')} className="btn btn-text">Sign In</button></p>
       </div>
@@ -304,13 +311,13 @@ function Onboarding({ setUser }) {
   const renderSignInStep = () => (
     <div className="onboarding-form">
       <h2>Sign in to your account</h2>
-      
+
       {message.text && (
         <div className={`message ${message.type}`}>
           {message.text}
         </div>
       )}
-      
+
       <form onSubmit={handleSignIn}>
         <div className="form-group">
           <label htmlFor="email">Email Address</label>
@@ -322,7 +329,7 @@ function Onboarding({ setUser }) {
             required
           />
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
@@ -333,19 +340,19 @@ function Onboarding({ setUser }) {
             required
           />
         </div>
-        
-        <button 
-          type="submit" 
+
+        <button
+          type="submit"
           className="btn btn-primary"
           disabled={loading}
         >
           {loading ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
-      
+
       <div className="form-footer">
-        <button 
-          onClick={() => setActiveStep('reset-password')} 
+        <button
+          onClick={() => setActiveStep('reset-password')}
           className="btn btn-text"
         >
           Forgot password?
@@ -358,22 +365,22 @@ function Onboarding({ setUser }) {
   const renderVerifyEmailStep = () => (
     <div className="onboarding-verify">
       <h2>Verify your email</h2>
-      
+
       {message.text && (
         <div className={`message ${message.type}`}>
           {message.text}
         </div>
       )}
-      
+
       <div className="email-icon">
         <i className="fas fa-envelope-open-text"></i>
       </div>
-      
+
       <p>We've sent a verification link to <strong>{email}</strong></p>
       <p>Please check your email and click the verification link to continue.</p>
-      
-      <button 
-        onClick={() => setActiveStep('sign-in')} 
+
+      <button
+        onClick={() => setActiveStep('sign-in')}
         className="btn btn-primary"
       >
         Back to Sign In
@@ -384,13 +391,13 @@ function Onboarding({ setUser }) {
   const renderResetPasswordStep = () => (
     <div className="onboarding-form">
       <h2>Reset your password</h2>
-      
+
       {message.text && (
         <div className={`message ${message.type}`}>
           {message.text}
         </div>
       )}
-      
+
       <form onSubmit={handlePasswordReset}>
         <div className="form-group">
           <label htmlFor="email">Email Address</label>
@@ -402,16 +409,16 @@ function Onboarding({ setUser }) {
             required
           />
         </div>
-        
-        <button 
-          type="submit" 
+
+        <button
+          type="submit"
           className="btn btn-primary"
           disabled={loading}
         >
           {loading ? 'Sending...' : 'Send Reset Instructions'}
         </button>
       </form>
-      
+
       <div className="form-footer">
         <button onClick={() => setActiveStep('sign-in')} className="btn btn-text">Back to Sign In</button>
       </div>
@@ -421,17 +428,17 @@ function Onboarding({ setUser }) {
   const renderCreateProfileStep = () => (
     <div className="onboarding-form profile-form">
       <h2>Complete your profile</h2>
-      
+
       {message.text && (
         <div className={`message ${message.type}`}>
           {message.text}
         </div>
       )}
-      
+
       <form onSubmit={handleCreateProfile}>
         <div className="form-section">
           <h3>Personal Information</h3>
-          
+
           <div className="form-group">
             <label htmlFor="fullName">Full Name</label>
             <input
@@ -442,7 +449,7 @@ function Onboarding({ setUser }) {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="phone">Phone Number</label>
             <input
@@ -453,10 +460,10 @@ function Onboarding({ setUser }) {
             />
           </div>
         </div>
-        
+
         <div className="form-section">
           <h3>Address (Optional)</h3>
-          
+
           <div className="form-group">
             <label htmlFor="address">Street Address</label>
             <input
@@ -466,7 +473,7 @@ function Onboarding({ setUser }) {
               onChange={(e) => setAddress(e.target.value)}
             />
           </div>
-          
+
           <div className="address-grid">
             <div className="form-group">
               <label htmlFor="city">City</label>
@@ -477,7 +484,7 @@ function Onboarding({ setUser }) {
                 onChange={(e) => setCity(e.target.value)}
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="state">State</label>
               <input
@@ -487,7 +494,7 @@ function Onboarding({ setUser }) {
                 onChange={(e) => setState(e.target.value)}
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="zipCode">ZIP Code</label>
               <input
@@ -499,9 +506,9 @@ function Onboarding({ setUser }) {
             </div>
           </div>
         </div>
-        
-        <button 
-          type="submit" 
+
+        <button
+          type="submit"
           className="btn btn-primary"
           disabled={loading}
         >

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OwnerIQ - Database Setup</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .step p {
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+        .code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .button:hover {
+            background: #5a6fd8;
+        }
+        .warning {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning h4 {
+            color: #e53e3e;
+            margin-top: 0;
+        }
+        .sql-content {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .copy-btn {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .copy-btn:hover {
+            background: #38a169;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 OwnerIQ Database Setup</h1>
+        <p class="subtitle">Follow these steps to set up the onboarding database tables</p>
+
+        <div class="step">
+            <h3>Step 1: Open Supabase Dashboard</h3>
+            <p>Click the button below to open your Supabase project dashboard:</p>
+            <a href="https://supabase.com/dashboard/project/zapanqzqloibnbsvkbob" target="_blank" class="button">🚀 Open Supabase Dashboard</a>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Open SQL Editor</h3>
+            <p>In the Supabase dashboard sidebar, click on "<strong>SQL Editor</strong>" and then click "<strong>New query</strong>"</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Copy the SQL Schema</h3>
+            <p>Click the button below to copy the entire SQL schema to your clipboard:</p>
+            <button class="copy-btn" onclick="copySQL()">📋 Copy SQL Schema</button>
+
+            <div class="sql-content" id="sqlContent">
+                <!-- SQL content will be loaded here -->
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Execute the SQL</h3>
+            <p>Paste the SQL into the Supabase SQL Editor and click "<strong>Run</strong>" to create all the tables.</p>
+        </div>
+
+        <div class="warning">
+            <h4>⚠️ Important Notes:</h4>
+            <ul>
+                <li>This will create new tables for the onboarding flow</li>
+                <li>It will add new columns to the existing property table</li>
+                <li>The operation is safe and won't delete existing data</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Step 5: Reset Your Onboarding (Optional)</h3>
+            <p>After creating the tables, you can reset your onboarding status to test the flow:</p>
+            <div class="code">
+                curl -X POST http://localhost:5001/api/onboarding/reset \
+                  -H "Content-Type: application/json" \
+                  -d '{"email": "eprada@teamlinx.com"}'
+            </div>
+            <p>Then refresh your application to see the onboarding flow!</p>
+        </div>
+    </div>
+
+    <script>
+        // Load SQL content
+        fetch('onboarding-schema.sql')
+            .then(response => response.text())
+            .then(sql => {
+                document.getElementById('sqlContent').textContent = sql;
+            })
+            .catch(error => {
+                console.error('Error loading SQL file:', error);
+                document.getElementById('sqlContent').textContent = 'Error loading SQL file. Please open the onboarding-schema.sql file directly.';
+            });
+
+        // Copy SQL to clipboard
+        function copySQL() {
+            const sqlText = document.getElementById('sqlContent').textContent;
+            navigator.clipboard.writeText(sqlText).then(() => {
+                alert('✅ SQL schema copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('❌ Failed to copy. Please select and copy manually.');
+            });
+        }
+    </script>
+</body>
+</html>

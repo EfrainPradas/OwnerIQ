@@ -265,7 +265,7 @@ async function loadTenants(supabase, ownerId, options = {}) {
       throw error;
     }
     tenancyRows = data || [];
-    
+
     // Add person IDs from tenancies
     tenancyRows.forEach(row => {
       if (row.person_id) {
@@ -681,10 +681,10 @@ async function fetchAvailablePropertiesForOwner(supabase, ownerId) {
 }
 
 function registerClientRoutes(app, supabase, authenticateToken) {
-  const requireAuth = authenticateToken(supabase);
+  const requireAuth = authenticateToken;
 
   console.log('Setting up leases invoices endpoint...');
-  
+
   // Leases routes - MUST be before other routes to avoid conflicts
   app.get('/api/leases/:id/invoices', requireAuth, async (req, res) => {
     console.log('🚀 Leases invoices endpoint called with params:', req.params);
@@ -801,14 +801,14 @@ function registerClientRoutes(app, supabase, authenticateToken) {
 
       if (personError) {
         console.error('Create tenant: person insert failed', JSON.stringify(personError, null, 2));
-        
+
         // Handle duplicate email error
         if (personError.code === '23505' && personError.message.includes('primary_email')) {
           return res.status(400).json({
             error: 'A person with this email already exists. Please use a different email address.'
           });
         }
-        
+
         return res.status(400).json({ error: personError.message });
       }
 
@@ -845,7 +845,7 @@ function registerClientRoutes(app, supabase, authenticateToken) {
 
         const { error: tenancyError } = await supabase.from('property_tenancy').insert(tenanciesToInsert);
         if (tenancyError) {
-        console.error('Create tenant: tenancy insert failed', JSON.stringify(tenancyError, null, 2));
+          console.error('Create tenant: tenancy insert failed', JSON.stringify(tenancyError, null, 2));
           return res.status(400).json({ error: tenancyError.message });
         }
       }
@@ -1881,7 +1881,7 @@ function registerClientRoutes(app, supabase, authenticateToken) {
       }
 
       const propertyIds = (propertiesResult.data || []).map(p => p.property_id);
-      
+
       if (!propertyIds.length) {
         return res.json([]);
       }

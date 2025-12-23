@@ -301,7 +301,7 @@
             document.getElementById('results-container').style.display = 'block';
             
             try {
-                const response = await fetch(`http://localhost:5000/api/properties/${propertyId}/full-data`, {
+                const response = await fetch(`http://localhost:5001/api/properties/${propertyId}/full-data`, {
                     headers: { 'Authorization': 'Bearer dummy-token' }
                 });
                 

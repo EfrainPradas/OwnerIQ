@@ -250,7 +250,7 @@ export default function TenantsView({ tenants, setTenants, isLoading, searchTerm
   const [isLoadingProperties, setIsLoadingProperties] = useState(false);
 
   const resolveAuthToken = useCallback(async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const session = await supabase.auth.session();
     const accessToken = session?.access_token;
     if (!accessToken && !ENABLE_DEMO_MODE) {
       throw new Error('Authentication required. Please sign in again.');

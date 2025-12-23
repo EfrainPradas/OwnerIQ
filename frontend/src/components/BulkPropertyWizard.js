@@ -90,7 +90,7 @@ function BulkPropertyWizard({ onComplete, onCancel }) {
     setProgress({ current: 0, total: files.length, stage: 'Initializing AI...' });
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const session = await supabase.auth.session();
       const token = session?.access_token || 'dummy-token';
 
       // Procesar documentos UNO POR UNO para mostrar progreso

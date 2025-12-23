@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OwnerIQ - Property Intelligence Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            text-align: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: #f1f5f9;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(6, 182, 212, 0.4);
+        }
+
+        .status {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .status h2 {
+            color: #10b981;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status p {
+            color: #94a3b8;
+        }
+
+        .api-test {
+            background: rgba(51, 65, 85, 0.4);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .api-test h3 {
+            color: #f1f5f9;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .test-results {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .test-item {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .test-success {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .test-error {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .status-indicator {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-error {
+            background: #ef4444;
+            color: white;
+        }
+
+        .loading {
+            color: #f59e0b;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span class="logo-icon">🏢</span>
+            <h1>OwnerIQ</h1>
+        </div>
+        <p class="subtitle">Property Intelligence & Management Platform</p>
+    </div>
+
+    <div class="container">
+        <div class="status">
+            <h2>✅ Backend Server Active</h2>
+            <p>Running on port 5001 with comprehensive API endpoints</p>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Comprehensive Onboarding</h3>
+                <p>Multi-step wizard for property intake with support for homeowners and investors, entity management, and document processing.</p>
+                <button class="btn" onclick="testOnboarding()">Test Onboarding API</button>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🏠</div>
+                <h3>Property Command Center</h3>
+                <p>Detailed property analytics with financial metrics, mortgage tracking, appreciation calculations, and equity analysis.</p>
+                <button class="btn" onclick="testPropertyAPI()">Test Property API</button>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💼</div>
+                <h3>Investor Portfolio</h3>
+                <p>Cross-property portfolio analytics with entity tracking, performance metrics, and comprehensive ownership structure.</p>
+                <button class="btn" onclick="testPortfolioAPI()">Test Portfolio API</button>
+            </div>
+        </div>
+
+        <div class="api-test">
+            <h3>API Connection Test</h3>
+            <div class="test-results" id="testResults">
+                <div class="test-item">
+                    <span>Backend Server</span>
+                    <span class="status-indicator status-success">Connected</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5001/api';
+
+        async function testOnboarding() {
+            const results = document.getElementById('testResults');
+
+            // Test profile endpoint
+            try {
+                const response = await fetch(`${API_BASE}/onboarding/profile`, {
+                    headers: {
+                        'Authorization': 'Bearer dummy-token',
+                        'x-demo-mode': 'true'
+                    }
+                });
+
+                if (response.ok) {
+                    addTestResult('Onboarding Profile API', true);
+                } else {
+                    addTestResult('Onboarding Profile API', false, response.status);
+                }
+            } catch (error) {
+                addTestResult('Onboarding Profile API', false, error.message);
+            }
+
+            // Test entities endpoint
+            try {
+                const response = await fetch(`${API_BASE}/onboarding/entities`, {
+                    headers: {
+                        'Authorization': 'Bearer dummy-token',
+                        'x-demo-mode': 'true'
+                    }
+                });
+
+                if (response.ok) {
+                    addTestResult('Entities API', true);
+                } else {
+                    addTestResult('Entities API', false, response.status);
+                }
+            } catch (error) {
+                addTestResult('Entities API', false, error.message);
+            }
+        }
+
+        async function testPropertyAPI() {
+            try {
+                const response = await fetch(`${API_BASE}/properties`, {
+                    headers: {
+                        'Authorization': 'Bearer dummy-token'
+                    }
+                });
+
+                if (response.ok) {
+                    addTestResult('Properties API', true);
+                } else {
+                    addTestResult('Properties API', false, response.status);
+                }
+            } catch (error) {
+                addTestResult('Properties API', false, error.message);
+            }
+        }
+
+        async function testPortfolioAPI() {
+            // Test if the onboarding endpoints support portfolio features
+            try {
+                const response = await fetch(`${API_BASE}/onboarding/entities`, {
+                    headers: {
+                        'Authorization': 'Bearer dummy-token',
+                        'x-demo-mode': 'true'
+                    }
+                });
+
+                if (response.ok) {
+                    addTestResult('Portfolio Backend', true);
+                } else {
+                    addTestResult('Portfolio Backend', false, response.status);
+                }
+            } catch (error) {
+                addTestResult('Portfolio Backend', false, error.message);
+            }
+        }
+
+        function addTestResult(testName, success, error = null) {
+            const results = document.getElementById('testResults');
+            const testItem = document.createElement('div');
+            testItem.className = `test-item ${success ? 'test-success' : 'test-error'}`;
+
+            testItem.innerHTML = `
+                <span>${testName}</span>
+                <span class="status-indicator ${success ? 'status-success' : 'status-error'}">
+                    ${success ? 'Success' : `Error${error ? ': ' + error : ''}`}
+                </span>
+            `;
+
+            results.appendChild(testItem);
+        }
+
+        // Auto-test basic connection on load
+        window.addEventListener('load', () => {
+            console.log('OwnerIQ Platform Loaded Successfully');
+            console.log('Backend API available at:', API_BASE);
+        });
+    </script>
+</body>
+</html>

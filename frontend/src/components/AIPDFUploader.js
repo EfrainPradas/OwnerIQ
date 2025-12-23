@@ -133,7 +133,7 @@ function AIPDFUploader({ onDataExtracted, propertyId }) {
       formData.append('property_id', propertyId);
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const session = await supabase.auth.session();
     const token = session?.access_token;
 
     try {
