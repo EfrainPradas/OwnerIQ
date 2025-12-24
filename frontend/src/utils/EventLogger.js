@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { API_BASE_URL } from '../config';
 
 /**
  * Helper para registrar eventos desde el frontend
@@ -14,7 +15,7 @@ class EventLogger {
 
             const token = session.data.session.access_token;
 
-            await fetch('http://localhost:5001/api/events/log', {
+            await fetch(`${API_BASE_URL}/api/events/log`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,7 +44,7 @@ class EventLogger {
 
             const token = session.data.session.access_token;
 
-            await fetch('http://localhost:5001/api/events/log', {
+            await fetch(`${API_BASE_URL}/api/events/log`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ class EventLogger {
 
             const token = session.data.session.access_token;
 
-            await fetch('http://localhost:5001/api/events/log', {
+            await fetch(`${API_BASE_URL}/api/events/log`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -100,7 +101,7 @@ class EventLogger {
 
             const token = session.data.session.access_token;
 
-            await fetch('http://localhost:5001/api/events/log', {
+            await fetch(`${API_BASE_URL}/api/events/log`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -128,7 +129,7 @@ class EventLogger {
 
             const token = session.data.session.access_token;
 
-            await fetch('http://localhost:5001/api/events/log', {
+            await fetch(`${API_BASE_URL}/api/events/log`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -157,7 +158,7 @@ class EventLogger {
 
             const token = session.data.session.access_token;
 
-            await fetch('http://localhost:5001/api/events/log', {
+            await fetch(`${API_BASE_URL}/api/events/log`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

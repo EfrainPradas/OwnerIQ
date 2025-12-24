@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../config';
 import './AdminDashboard.css';
 
 const AdminProcessLogs = ({ selectedBatchId }) => {
@@ -15,7 +16,7 @@ const AdminProcessLogs = ({ selectedBatchId }) => {
     const loadLogs = async (batchId) => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:5001/api/admin/process-logs/${batchId}`);
+            const response = await fetch(`${API_BASE_URL}/api/admin/process-logs/${batchId}`);
             const data = await response.json();
             if (data.success) {
                 setLogs(data.events || []);

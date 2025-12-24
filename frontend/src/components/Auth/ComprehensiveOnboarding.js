@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
+import { API_BASE_URL } from '../../config';
 import '../Auth/ComprehensiveOnboarding.css';
 
 const ComprehensiveOnboarding = ({ setUser, onboardingComplete }) => {
@@ -67,7 +68,7 @@ const ComprehensiveOnboarding = ({ setUser, onboardingComplete }) => {
       // Load existing profile to resume progress
       try {
         const token = session.access_token;
-        const response = await fetch('http://localhost:5001/api/onboarding/profile', {
+        const response = await fetch(`${API_BASE_URL}/api/onboarding/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'x-demo-mode': 'false'
@@ -215,7 +216,7 @@ const ComprehensiveOnboarding = ({ setUser, onboardingComplete }) => {
       const token = session?.access_token;
       if (token) {
         try {
-          await fetch('http://localhost:5001/api/onboarding/profile', {
+          await fetch(`${API_BASE_URL}/api/onboarding/profile`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -337,7 +338,7 @@ const ComprehensiveOnboarding = ({ setUser, onboardingComplete }) => {
   const createUserProfile = async (user, status = 'IN_PROGRESS') => {
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token;
-    const response = await fetch('http://localhost:5001/api/onboarding/profile', {
+    const response = await fetch(`${API_BASE_URL}/api/onboarding/profile`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -364,7 +365,7 @@ const ComprehensiveOnboarding = ({ setUser, onboardingComplete }) => {
       const token = session?.access_token;
 
       // Update user profile to COMPLETED status
-      const response = await fetch('http://localhost:5001/api/onboarding/profile', {
+      const response = await fetch(`${API_BASE_URL}/api/onboarding/profile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -401,7 +402,7 @@ const ComprehensiveOnboarding = ({ setUser, onboardingComplete }) => {
         const token = (await supabase.auth.getSession()).data.session?.access_token;
 
         // 3. Send to backend
-        const response = await fetch('http://localhost:5001/api/onboarding/upload', {
+        const response = await fetch(`${API_BASE_URL}/api/onboarding/upload`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

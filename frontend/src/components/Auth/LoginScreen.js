@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../../supabaseClient';
+import { API_BASE_URL } from '../../config';
 import './LoginScreen.css';
 
 const LoginScreen = ({ setUser }) => {
@@ -38,7 +39,7 @@ const LoginScreen = ({ setUser }) => {
 
         // Check if user has completed onboarding
         try {
-          const response = await fetch('http://localhost:5001/api/onboarding/profile', {
+          const response = await fetch(`${API_BASE_URL}/api/onboarding/profile`, {
             headers: {
               'Authorization': `Bearer dummy-token`,
               'x-demo-mode': 'true'

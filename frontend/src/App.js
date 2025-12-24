@@ -106,7 +106,7 @@ function App() {
         // Check if user has completed onboarding
         try {
           const { access_token } = session;
-          const response = await fetch('http://localhost:5001/api/onboarding/profile', {
+          const response = await fetch(`${API_BASE_URL}/api/onboarding/profile`, {
             headers: {
               'Authorization': `Bearer ${access_token}`,
               'x-demo-mode': 'false'
@@ -1667,7 +1667,7 @@ function ProfileView() {
 
 const AppWithRouter = () => {
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL || '/ownerIQ'}>
       <App />
     </Router>
   );

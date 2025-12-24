@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../config';
 import './AdminDashboard.css';
 
 const OnboardingEventLogs = ({ selectedUserId }) => {
@@ -15,7 +16,7 @@ const OnboardingEventLogs = ({ selectedUserId }) => {
     const loadLogs = async (userId) => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:5001/api/events/${userId}`);
+            const response = await fetch(`${API_BASE_URL}/api/events/${userId}`);
             const data = await response.json();
             if (data.success) {
                 setLogs(data.events || []);

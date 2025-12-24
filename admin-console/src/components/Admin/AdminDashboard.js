@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
-import { API_BASE_URL } from '../../config';
 import './AdminDashboard.css';
 import { MatrixBinaryRain } from './MatrixBinaryRain';
 import AdminProcessLogs from './AdminProcessLogs';
@@ -107,7 +106,7 @@ const AdminDashboard = () => {
         setProcessing(prev => ({ ...prev, [documentId]: true }));
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/admin/process-document`, {
+            const response = await fetch('http://localhost:5001/api/admin/process-document', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -158,7 +157,7 @@ const AdminDashboard = () => {
         try {
             setSavingToTables(prev => ({ ...prev, [documentId]: true }));
 
-            const response = await fetch(`${API_BASE_URL}/api/admin/save-to-tables`, {
+            const response = await fetch('http://localhost:5001/api/admin/save-to-tables', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -195,7 +194,7 @@ const AdminDashboard = () => {
         try {
             setBulkProcessing(true);
 
-            const response = await fetch(`${API_BASE_URL}/api/admin/process-all`, {
+            const response = await fetch('http://localhost:5001/api/admin/process-all', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
